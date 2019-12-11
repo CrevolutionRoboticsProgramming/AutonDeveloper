@@ -85,7 +85,7 @@ public class Main extends Application
     private Vector<DraggableWaypoint> waypoints = new Vector<>();
     private DraggableWaypoint selectedWaypoint;
 
-    private Vector<Circle> projectedPath = new Vector<>();
+    private Vector<Circle> leftProjectedPath = new Vector<>(), rightProjectedPath = new Vector<>();
 
     @FXML
     private void initialize()
@@ -179,7 +179,7 @@ public class Main extends Application
             }
 
             Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH,
-                    0.05, selectedRobot.maxVelocity, selectedRobot.maxAcceleration, selectedRobot.maxJerk);
+                    0.001, selectedRobot.maxVelocity, selectedRobot.maxAcceleration, selectedRobot.maxJerk);
             Trajectory trajectory = Pathfinder.generate(points, config);
 
             TankModifier modifier = new TankModifier(trajectory);
@@ -188,9 +188,19 @@ public class Main extends Application
             Trajectory left = modifier.getLeftTrajectory();
             Trajectory right = modifier.getRightTrajectory();
 
-            File leftFile = new File("LeftTrajectory.csv");
+            // Coverts the dt from seconds to milliseconds (which the talons use)
+            for (Trajectory.Segment segment : left.segments)
+            {
+                segment.dt *= 1000;
+            }
+            for (Trajectory.Segment segment : right.segments)
+            {
+                segment.dt *= 1000;
+            }
+
+            File leftFile = new File("LeftTrajectory." + selectedRobot.countsPerFoot);
             Pathfinder.writeToCSV(leftFile, left);
-            File rightFile = new File("RightTrajectory.csv");
+            File rightFile = new File("RightTrajectory." + selectedRobot.countsPerFoot);
             Pathfinder.writeToCSV(rightFile, right);
         });
 
@@ -303,14 +313,20 @@ public class Main extends Application
         final Timeline lineDrawer = new Timeline(
                 new KeyFrame(Duration.ZERO, event ->
                 {
+                    for (Circle circle : leftProjectedPath)
+                    {
+                        root.getChildren().remove(circle);
+                    }
+                    for (Circle circle : rightProjectedPath)
+                    {
+                        root.getChildren().remove(circle);
+                    }
+
+                    leftProjectedPath.clear();
+                    rightProjectedPath.clear();
+
                     if (waypoints.size() >= 2)
                     {
-                        for (Circle circle : projectedPath)
-                        {
-                            root.getChildren().remove(circle);
-                        }
-
-                        projectedPath.clear();
 
                         Waypoint[] points = new Waypoint[waypoints.size()];
                         for (int i = 0; i < waypoints.size(); ++i)
@@ -324,44 +340,22 @@ public class Main extends Application
                                 1, selectedRobot.maxVelocity, selectedRobot.maxAcceleration, selectedRobot.maxJerk);
                         Trajectory trajectory = Pathfinder.generate(points, config);
 
-                        for (int i = 0; i < trajectory.segments.length; ++i)
+                        TankModifier modifier = new TankModifier(trajectory);
+                        modifier.modify(selectedRobot.wheelbase);
+
+                        Trajectory left = modifier.getLeftTrajectory();
+                        Trajectory right = modifier.getRightTrajectory();
+
+                        for (Circle circle : getProjectedPathCircles(left))
                         {
-                            int radius = 5;
-
-                            Circle circle = new Circle();
-                            circle.setRadius(radius);
-                            circle.setFill(Paint.valueOf("white"));
-                            circle.setStroke(Paint.valueOf("black"));
-                            circle.setStrokeType(StrokeType.INSIDE);
-                            circle.setStrokeWidth(2);
-                            circle.setCenterX(trajectory.segments[i].x);
-                            circle.setCenterY(trajectory.segments[i].y);
-
-                            boolean intersect = false;
-                            for (DraggableWaypoint waypoint : waypoints)
-                            {
-                                if (waypoint.getBoundsInParent().intersects(circle.getBoundsInParent()))
-                                    intersect = true;
-                            }
-
-                            if (!intersect
-                                    && circle.getCenterX() - circle.getRadius() > fieldImageView.getLayoutX() + fieldImageView.getTranslateX()
-                                    && circle.getCenterX() + circle.getRadius() < fieldImageView.getLayoutX() + fieldImageView.getTranslateX() + fieldImageView.getFitWidth()
-                                    && circle.getCenterY() - circle.getRadius() > fieldImageView.getLayoutY() + fieldImageView.getTranslateY()
-                                    && circle.getCenterY() + circle.getRadius() < fieldImageView.getLayoutY() + fieldImageView.getTranslateY() + fieldImageView.getFitHeight())
-                            {
-                                projectedPath.add(circle);
-                                root.getChildren().add(circle);
-                            }
+                            leftProjectedPath.add(circle);
+                            root.getChildren().add(circle);
                         }
-                    } else
-                    {
-                        for (Circle circle : projectedPath)
+                        for (Circle circle : getProjectedPathCircles(right))
                         {
-                            root.getChildren().remove(circle);
+                            rightProjectedPath.add(circle);
+                            root.getChildren().add(circle);
                         }
-
-                        projectedPath.clear();
                     }
                 }),
                 new KeyFrame(Duration.millis(25))
@@ -369,6 +363,42 @@ public class Main extends Application
         lineDrawer.setCycleCount(Timeline.INDEFINITE);
 
         lineDrawer.play();
+    }
+
+    private Vector<Circle> getProjectedPathCircles(Trajectory trajectory)
+    {
+        Vector<Circle> circles = new Vector<>();
+        for (int i = 0; i < trajectory.segments.length; ++i)
+        {
+            int radius = 5;
+
+            Circle circle = new Circle();
+            circle.setRadius(radius);
+            circle.setFill(Paint.valueOf("white"));
+            circle.setStroke(Paint.valueOf("black"));
+            circle.setStrokeType(StrokeType.INSIDE);
+            circle.setStrokeWidth(2);
+            circle.setCenterX(trajectory.segments[i].x);
+            circle.setCenterY(trajectory.segments[i].y);
+
+            boolean intersect = false;
+            for (DraggableWaypoint waypoint : waypoints)
+            {
+                if (waypoint.getBoundsInParent().intersects(circle.getBoundsInParent()))
+                    intersect = true;
+            }
+
+            if (!intersect
+                    && circle.getCenterX() - circle.getRadius() > fieldImageView.getLayoutX() + fieldImageView.getTranslateX()
+                    && circle.getCenterX() + circle.getRadius() < fieldImageView.getLayoutX() + fieldImageView.getTranslateX() + fieldImageView.getFitWidth()
+                    && circle.getCenterY() - circle.getRadius() > fieldImageView.getLayoutY() + fieldImageView.getTranslateY()
+                    && circle.getCenterY() + circle.getRadius() < fieldImageView.getLayoutY() + fieldImageView.getTranslateY() + fieldImageView.getFitHeight())
+            {
+                circles.add(circle);
+            }
+        }
+
+        return circles;
     }
 
     private void updateDisplay(DraggableWaypoint waypoint)
