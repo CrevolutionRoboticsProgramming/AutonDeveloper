@@ -1,19 +1,15 @@
 package org.frc2851;
 
 import javafx.geometry.Point2D;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-
-import java.nio.file.Paths;
 
 public class DraggableWaypoint extends Region
 {
@@ -78,11 +74,11 @@ public class DraggableWaypoint extends Region
         setTranslateX(Math.round(getTranslateX() * 4.0) / 4.0);
         setTranslateY(Math.round(getTranslateY() * 4.0) / 4.0);
 
-        for (int i = 0; i < 2 && getAdjustedX(xOffset) % 0.25 != 0; ++i)
+        for (int i = 0; i < 2 && getAdjustedXInches(xOffset) % 0.25 != 0; ++i)
         {
             setTranslateX(right ? getTranslateX() + 0.25 : getTranslateX() - 0.25);
         }
-        for (int i = 0; i < 2 && getAdjustedY(yOffset) % 0.25 != 0; ++i)
+        for (int i = 0; i < 2 && getAdjustedYInches(yOffset) % 0.25 != 0; ++i)
         {
             setTranslateY(up ? getTranslateY() - 0.25 : getTranslateY() + 0.25);
         }
@@ -149,16 +145,16 @@ public class DraggableWaypoint extends Region
         return getLayoutY() + getTranslateY();
     }
 
-    public double getAdjustedX(double offset)
+    public double getAdjustedXInches(double offset)
     {
-        return (getUnrotatedX() + getWidth() / 2 - offset) * 2.0 / 3.0;
+        return Util.scaleDimensionDown(getUnrotatedX() + getWidth() / 2 - offset);
     }
 
-    public double getAdjustedY(double offset)
+    public double getAdjustedYInches(double offset)
     {
         // Position is measured with (0, 0) in the top-left corner; x increases rightwards, y increases downwards
         // This flips the measurement to make (0, 0) the bottom-left corner of the picture
-        return 324 - ((getUnrotatedY() + getHeight() / 2 - offset) * 2.0 / 3.0);
+        return 324 - Util.scaleDimensionDown(getUnrotatedY() + getHeight() / 2 - offset);
     }
 
     private Point2D getRotatedPoint(Point2D center, Point2D point, double rotation)
@@ -175,6 +171,7 @@ public class DraggableWaypoint extends Region
         public double x, y;
         public double minX, minY, maxX, maxY;
         public double width, height;
+        public Point2D center;
 
         public Dimensions()
         {
@@ -191,7 +188,7 @@ public class DraggableWaypoint extends Region
                             new Point2D(getUnrotatedX() + getWidth(), getUnrotatedY() + getHeight())
                     };
 
-            Point2D center = new Point2D(getUnrotatedX() + getWidth() / 2, getUnrotatedY() + getHeight() / 2);
+            center = new Point2D(getUnrotatedX() + getWidth() / 2, getUnrotatedY() + getHeight() / 2);
 
             for (Point2D point : corners)
             {

@@ -25,8 +25,13 @@ import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.frc2851.field.Field;
+import org.frc2851.field.Fields;
+import org.frc2851.robot.Robot;
+import org.frc2851.robot.Robots;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Vector;
@@ -92,22 +97,22 @@ public class Main extends Application
     {
         for (Field field : Fields.fields)
         {
-            fieldsComboBox.getItems().add(field.name);
+            fieldsComboBox.getItems().add(field.getName());
         }
         fieldsComboBox.getSelectionModel().selectFirst();
 
         for (Robot robot : Robots.robots)
         {
-            robotsComboBox.getItems().add(robot.name);
+            robotsComboBox.getItems().add(robot.getName());
         }
         robotsComboBox.getSelectionModel().selectFirst();
 
         // Sets default to first field
-        fieldImageView.setImage(new Image(String.valueOf(getClass().getResource(Fields.fields[0].pictureUrl))));
+        fieldImageView.setImage(new Image(String.valueOf(getClass().getResource(Fields.fields[0].getPictureUrl()))));
         fieldsComboBox.setOnAction(event ->
         {
             // Sets the image displayed in the field ImageView to the newly selected field
-            fieldImageView.setImage(new Image(Fields.fields[fieldsComboBox.getSelectionModel().getSelectedIndex()].pictureUrl));
+            fieldImageView.setImage(new Image(Fields.fields[fieldsComboBox.getSelectionModel().getSelectedIndex()].getPictureUrl()));
         });
 
         // Sets default to first robot
@@ -120,7 +125,7 @@ public class Main extends Application
 
         fieldImageView.setOnMousePressed(event ->
         {
-            DraggableWaypoint newWaypoint = new DraggableWaypoint(selectedRobot.width, selectedRobot.length, event.getX(), event.getY(), waypoints.size() + 1);
+            DraggableWaypoint newWaypoint = new DraggableWaypoint(selectedRobot.getWidthPixels(), selectedRobot.getLengthPixels(), event.getX(), event.getY(), waypoints.size() + 1);
 
             newWaypoint.constrainPosition(fieldImageView.getLayoutX() + fieldImageView.getTranslateX(),
                     fieldImageView.getLayoutY() + fieldImageView.getTranslateY(), fieldImageView.getFitWidth(), fieldImageView.getFitHeight());
@@ -170,38 +175,38 @@ public class Main extends Application
 
         createTrajectoryButton.setOnMouseClicked(event ->
         {
-            Waypoint[] points = new Waypoint[waypoints.size()];
-            for (int i = 0; i < waypoints.size(); ++i)
-            {
-                points[i] = new Waypoint(waypoints.elementAt(i).getUnrotatedX() + waypoints.elementAt(i).getWidth() / 2,
-                        waypoints.elementAt(i).getAdjustedY(fieldImageView.getLayoutY() + fieldImageView.getTranslateY()),
-                        Pathfinder.d2r(waypoints.elementAt(i).getRotate() + 90));
-            }
+                Waypoint[] points = new Waypoint[waypoints.size()];
+                for (int i = 0; i < waypoints.size(); ++i)
+                {
+                    points[i] = new Waypoint(waypoints.elementAt(i).getAdjustedXInches(fieldImageView.getLayoutX() + fieldImageView.getTranslateX()),
+                            waypoints.elementAt(i).getAdjustedYInches(fieldImageView.getLayoutY() + fieldImageView.getTranslateY()),
+                            Pathfinder.d2r(-waypoints.elementAt(i).getRotate() + 90));
+                }
 
-            Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH,
-                    0.001, selectedRobot.maxVelocity, selectedRobot.maxAcceleration, selectedRobot.maxJerk);
-            Trajectory trajectory = Pathfinder.generate(points, config);
+                Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH,
+                        0.001, selectedRobot.getMaxVelocity(), selectedRobot.getMaxAcceleration(), selectedRobot.getMaxJerk());
+                Trajectory trajectory = Pathfinder.generate(points, config);
 
-            TankModifier modifier = new TankModifier(trajectory);
-            modifier.modify(selectedRobot.wheelbase);
+                TankModifier modifier = new TankModifier(trajectory);
+                modifier.modify(selectedRobot.getWheelbase());
 
-            Trajectory left = modifier.getLeftTrajectory();
-            Trajectory right = modifier.getRightTrajectory();
+                Trajectory left = modifier.getLeftTrajectory();
+                Trajectory right = modifier.getRightTrajectory();
 
-            // Coverts the dt from seconds to milliseconds (which the talons use)
-            for (Trajectory.Segment segment : left.segments)
-            {
-                segment.dt *= 1000;
-            }
-            for (Trajectory.Segment segment : right.segments)
-            {
-                segment.dt *= 1000;
-            }
+                // Coverts the dt from seconds to milliseconds (which the talons use)
+                for (Trajectory.Segment segment : left.segments)
+                {
+                    segment.dt *= 1000;
+                }
+                for (Trajectory.Segment segment : right.segments)
+                {
+                    segment.dt *= 1000;
+                }
 
-            File leftFile = new File("LeftTrajectory." + selectedRobot.countsPerFoot);
-            Pathfinder.writeToCSV(leftFile, left);
-            File rightFile = new File("RightTrajectory." + selectedRobot.countsPerFoot);
-            Pathfinder.writeToCSV(rightFile, right);
+                File leftFile = new File("LeftTrajectory.csv");
+                Pathfinder.writeToCSV(leftFile, left);
+                File rightFile = new File("RightTrajectory.csv");
+                Pathfinder.writeToCSV(rightFile, right);
         });
 
         root.setOnMousePressed(mousePressedEvent ->
@@ -327,21 +332,20 @@ public class Main extends Application
 
                     if (waypoints.size() >= 2)
                     {
-
                         Waypoint[] points = new Waypoint[waypoints.size()];
                         for (int i = 0; i < waypoints.size(); ++i)
                         {
-                            points[i] = new Waypoint(waypoints.elementAt(i).getUnrotatedX() + waypoints.elementAt(i).getWidth() / 2,
-                                    waypoints.elementAt(i).getUnrotatedY() + waypoints.elementAt(i).getHeight() / 2,
-                                    Pathfinder.d2r(waypoints.elementAt(i).getRotate() + 90));
+                            points[i] = new Waypoint(waypoints.elementAt(i).getDimensions().center.getX(),
+                                    waypoints.elementAt(i).getDimensions().center.getY(),
+                                    Pathfinder.d2r(waypoints.elementAt(i).getRotate() - 90));
                         }
 
                         Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, 1,
-                                1, selectedRobot.maxVelocity, selectedRobot.maxAcceleration, selectedRobot.maxJerk);
+                                0.1, selectedRobot.getMaxVelocity(), selectedRobot.getMaxAcceleration(), selectedRobot.getMaxJerk());
                         Trajectory trajectory = Pathfinder.generate(points, config);
 
                         TankModifier modifier = new TankModifier(trajectory);
-                        modifier.modify(selectedRobot.wheelbase);
+                        modifier.modify(selectedRobot.getWheelbase());
 
                         Trajectory left = modifier.getLeftTrajectory();
                         Trajectory right = modifier.getRightTrajectory();
@@ -413,13 +417,13 @@ public class Main extends Application
         {
             DecimalFormat formatter = new DecimalFormat("000.00");
             waypointNumberText.setText(String.valueOf(waypoints.indexOf(waypoint) + 1));
-            xText.setText(formatter.format(waypoint.getAdjustedX(fieldImageView.getLayoutX() + fieldImageView.getTranslateX())));
-            yText.setText(formatter.format(waypoint.getAdjustedY(fieldImageView.getLayoutY() + fieldImageView.getTranslateY())));
+            xText.setText(formatter.format(waypoint.getAdjustedXInches(fieldImageView.getLayoutX() + fieldImageView.getTranslateX())));
+            yText.setText(formatter.format(waypoint.getAdjustedYInches(fieldImageView.getLayoutY() + fieldImageView.getTranslateY())));
             exitAngleText.setText(formatter.format(waypoint.getRotate()));
         }
     }
 
-    private void configureLongPressButton(Button button, OnClick onClick)
+    private void configureLongPressButton(Button button, Runnable onClick)
     {
         final AnimationTimer timer = new AnimationTimer()
         {
@@ -476,10 +480,5 @@ public class Main extends Application
         stage.setTitle("Auton Developer");
         stage.setScene(scene);
         stage.show();
-    }
-
-    interface OnClick
-    {
-        void run();
     }
 }
