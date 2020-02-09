@@ -7,7 +7,7 @@
 
 <Pane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.frc2851.Main">
    <ImageView fx:id="fieldImageView" fitHeight="486.0" fitWidth="972.0" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
-      <Image url="@field/INFINITERECHARGE.png" />
+      <Image url="@field/InfiniteRecharge.png" />
    </ImageView>
    <Button id="clearNodesButton" fx:id="clearNodesButton" layoutX="1050.0" layoutY="49.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="164.0" text="Clear Nodes">
       <font>

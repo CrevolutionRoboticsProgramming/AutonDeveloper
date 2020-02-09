@@ -51,7 +51,7 @@ public class DraggableWaypoint extends Region
         rankText.setX(width / 2 - rankText.getLayoutBounds().getWidth() / 2);
         rankText.setY(length / 2 + rankText.getLayoutBounds().getHeight() / 1.5);
 
-        rotateIcon = new ImageView(String.valueOf(getClass().getResource("/org/frc2851/rotateIcon.png")));
+        rotateIcon = new ImageView(String.valueOf(getClass().getResource("/org/frc2851/RotateIcon.png")));
         rotateIcon.setFitWidth(width / 2);
         rotateIcon.setX((width - rotateIcon.getFitWidth()) / 2);
         rotateIcon.setFitHeight(rotateIcon.getFitWidth());
