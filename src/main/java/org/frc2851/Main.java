@@ -184,8 +184,10 @@ public class Main extends Application
             newWaypoint.mRotateIcon.setOnMouseDragged(mouseDraggedEvent ->
             {
                 mStopButton.fire();
-                newWaypoint.setRotate(90 - Math.toDegrees(Math.atan2((newWaypoint.getUnrotatedY() + newWaypoint.getHeight() / 2) - mouseDraggedEvent.getSceneY(),
-                        mouseDraggedEvent.getSceneX() - (newWaypoint.getUnrotatedX() + newWaypoint.getWidth() / 2))));
+                newWaypoint.setRotate(90 - Math.toDegrees(Math.atan2(
+                        newWaypoint.getDimensions().center.getY() - mouseDraggedEvent.getSceneY() - (mFieldImageView.getLayoutY() + mFieldImageView.getTranslateY())
+                                + (newWaypoint.getHeight() / 2),
+                        mouseDraggedEvent.getSceneX() - newWaypoint.getDimensions().center.getX() - (mFieldImageView.getLayoutX() + mFieldImageView.getTranslateX()))));
                 newWaypoint.constrainRotation(0, 0, mFieldImageView.getFitWidth(), mFieldImageView.getFitHeight());
                 updateDisplay(newWaypoint);
             });
