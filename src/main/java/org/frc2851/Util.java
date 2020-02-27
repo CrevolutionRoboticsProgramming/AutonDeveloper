@@ -2,13 +2,13 @@ package org.frc2851;
 
 public final class Util
 {
-    public static double scaleDimensionUp(double dimension)
+    public static double inchesToPixels(double inches)
     {
-        return dimension * (3.0 / 2.0);
+        return inches * (3.0 / 2.0);
     }
 
-    public static double scaleDimensionDown(double dimension)
+    public static double pixelsToInches(double pixels)
     {
-        return dimension * (2.0 / 3.0);
+        return pixels * (2.0 / 3.0);
     }
 }

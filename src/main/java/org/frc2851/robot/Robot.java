@@ -32,8 +32,8 @@ public class Robot
                  double maxVelocity, double maxAcceleration, double maxJerk)
     {
         mName = name;
-        mWidth = Util.scaleDimensionUp(width);
-        mLength = Util.scaleDimensionUp(length);
+        mWidth = Util.inchesToPixels(width);
+        mLength = Util.inchesToPixels(length);
         mDriveKinematics = new DifferentialDriveKinematics(wheelbase);
         mMaxVelocity = maxVelocity;
         mMaxAcceleration = maxAcceleration;
@@ -52,7 +52,7 @@ public class Robot
 
     public double getWidthInches()
     {
-        return Util.scaleDimensionDown(mWidth);
+        return Util.pixelsToInches(mWidth);
     }
 
     public double getLengthPixels()
@@ -62,7 +62,7 @@ public class Robot
 
     public double getLengthInches()
     {
-        return Util.scaleDimensionDown(mLength);
+        return Util.pixelsToInches(mLength);
     }
 
     public DifferentialDriveKinematics getDriveKinematics()

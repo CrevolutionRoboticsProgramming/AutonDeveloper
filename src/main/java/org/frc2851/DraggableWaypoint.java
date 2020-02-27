@@ -13,69 +13,66 @@ import javafx.scene.text.Text;
 
 public class DraggableWaypoint extends Region
 {
-    public Rectangle rectangle;
-    public ImageView rotateIcon;
-    public Text rankText;
-    private Point2D mouseOffset;
+    public Rectangle mRectangle;
+    public ImageView mRotateIcon;
+    public Text mRankText;
+    private Point2D mMouseOffset;
 
-    public DraggableWaypoint(double width, double length, double x, double y, int rank)
+    public DraggableWaypoint(double width, double length, double xOffset, double yOffset, double x, double y, int rank)
     {
         super();
 
-        setLayoutX(0);
-        setLayoutY(0);
+        setLayoutX(xOffset);
+        setLayoutY(yOffset);
         setTranslateX(x);
         setTranslateY(y);
 
         setWidth(width);
         setHeight(length);
 
-        rectangle = new Rectangle();
+        mRectangle = new Rectangle();
 
-        rectangle.setWidth(width);
-        rectangle.setHeight(length);
+        mRectangle.setWidth(width);
+        mRectangle.setHeight(length);
 
-        rectangle.setFill(Paint.valueOf("white"));
+        mRectangle.setFill(Paint.valueOf("white"));
 
-        rectangle.setStroke(Paint.valueOf("black"));
-        rectangle.setStrokeType(StrokeType.INSIDE);
-        rectangle.setStrokeWidth(2);
+        mRectangle.setStroke(Paint.valueOf("black"));
+        mRectangle.setStrokeType(StrokeType.INSIDE);
+        mRectangle.setStrokeWidth(2);
 
-        setOnMousePressed(event ->
-                mouseOffset = new Point2D(event.getSceneX() - getDimensions().x, event.getSceneY() - getDimensions().y));
+        setOnMousePressed((event) -> mMouseOffset = new Point2D(event.getSceneX() - getDimensions().x, event.getSceneY() - getDimensions().y));
 
-        rankText = new Text();
+        mRankText = new Text();
 
-        rankText.setText(String.valueOf(rank));
-        rankText.setFont(Font.font("system", FontWeight.EXTRA_BOLD, 20));
-        rankText.setX(width / 2 - rankText.getLayoutBounds().getWidth() / 2);
-        rankText.setY(length / 2 + rankText.getLayoutBounds().getHeight() / 1.5);
+        mRankText.setText(String.valueOf(rank));
+        mRankText.setFont(Font.font("system", FontWeight.EXTRA_BOLD, 20));
+        mRankText.setX(width / 2 - mRankText.getLayoutBounds().getWidth() / 2);
+        mRankText.setY(length / 2 + mRankText.getLayoutBounds().getHeight() / 1.5);
 
-        rotateIcon = new ImageView(String.valueOf(getClass().getResource("/org/frc2851/RotateIcon.png")));
-        rotateIcon.setFitWidth(width / 2);
-        rotateIcon.setX((width - rotateIcon.getFitWidth()) / 2);
-        rotateIcon.setFitHeight(rotateIcon.getFitWidth());
-        rotateIcon.setY((length - rotateIcon.getFitHeight()) / 6);
+        mRotateIcon = new ImageView(String.valueOf(getClass().getResource("/org/frc2851/RotateIcon.png")));
+        mRotateIcon.setFitWidth(width / 2);
+        mRotateIcon.setX((width - mRotateIcon.getFitWidth()) / 2);
+        mRotateIcon.setFitHeight(mRotateIcon.getFitWidth());
+        mRotateIcon.setY((length - mRotateIcon.getFitHeight()) / 6);
 
-        getChildren().add(rectangle);
-        getChildren().add(rankText);
-        getChildren().add(rotateIcon);
+        getChildren().addAll(mRectangle, mRankText, mRotateIcon);
     }
 
     public void followMouse(MouseEvent mouseDraggedEvent)
     {
-        setTranslateX(mouseDraggedEvent.getSceneX() - mouseOffset.getX() + (getUnrotatedX() - getDimensions().x));
-        setTranslateY(mouseDraggedEvent.getSceneY() - mouseOffset.getY() + (getUnrotatedY() - getDimensions().y));
+        setTranslateX(mouseDraggedEvent.getSceneX() - mMouseOffset.getX() + (getUnrotatedX() - getDimensions().x));
+        setTranslateY(mouseDraggedEvent.getSceneY() - mMouseOffset.getY() + (getUnrotatedY() - getDimensions().y));
     }
 
-    private void truncatePosition(double xOffset, double yOffset)
+    private void truncatePosition()
     {
         // Makes the x- and y-coordinates multiples of 0.25 for +1 prettiness
-        setTranslateX(getTranslateX() - Util.scaleDimensionUp(getAdjustedXInches(xOffset) % 0.25));
-        setTranslateY(getTranslateY() - Util.scaleDimensionUp(getAdjustedYInches(yOffset) % 0.25));
+        setTranslateX(getTranslateX() - Util.inchesToPixels(getAdjustedXInches() % 0.25));
+        setTranslateY(getTranslateY() + Util.inchesToPixels(getAdjustedYInches() % 0.25));
     }
 
-    public void constrainPosition(double x, double y, double width, double height)
+    public void constrainTranslation(double x, double y, double width, double height)
     {
         if (getDimensions().x < x)
         {
@@ -93,7 +90,7 @@ public class DraggableWaypoint extends Region
             setTranslateY(y + height - (getDimensions().height - (getTranslateY() - getDimensions().y)));
         }
 
-        truncatePosition(x, y);
+        truncatePosition();
     }
 
     public void constrainRotation(double x, double y, double width, double height)
@@ -109,12 +106,12 @@ public class DraggableWaypoint extends Region
             setRotate(getRotate() + 360);
         }
 
-        constrainPosition(x, y, width, height);
+        constrainTranslation(x, y, width, height);
     }
 
     public void setRank(int rank)
     {
-        rankText.setText(String.valueOf(rank));
+        mRankText.setText(String.valueOf(rank));
     }
 
     public Dimensions getDimensions()
@@ -124,24 +121,24 @@ public class DraggableWaypoint extends Region
 
     public double getUnrotatedX()
     {
-        return getLayoutX() + getTranslateX();
+        return getTranslateX();
     }
 
     public double getUnrotatedY()
     {
-        return getLayoutY() + getTranslateY();
+        return getTranslateY();
     }
 
-    public double getAdjustedXInches(double offset)
+    public double getAdjustedXInches()
     {
-        return Util.scaleDimensionDown(getUnrotatedX() + getWidth() / 2 - offset);
+        return Util.pixelsToInches(getDimensions().center.getX());
     }
 
-    public double getAdjustedYInches(double offset)
+    public double getAdjustedYInches()
     {
         // Position is measured with (0, 0) in the top-left corner; x increases rightwards, y increases downwards
         // This flips the measurement to make (0, 0) the bottom-left corner of the picture
-        return /*324 -*/ Util.scaleDimensionDown(getUnrotatedY() + getHeight() / 2 - offset);
+        return 324 - Util.pixelsToInches(getDimensions().center.getY());
     }
 
     private Point2D getRotatedPoint(Point2D center, Point2D point, double rotation)

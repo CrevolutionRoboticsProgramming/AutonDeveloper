@@ -5,16 +5,16 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<Pane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.frc2851.Main">
-   <ImageView fx:id="fieldImageView" fitHeight="486.0" fitWidth="972.0" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+<Pane fx:id="mRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.frc2851.Main">
+   <ImageView fx:id="mFieldImageView" fitHeight="486.0" fitWidth="972.0" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
       <Image url="@field/InfiniteRecharge.png" />
    </ImageView>
-   <Button id="clearNodesButton" fx:id="clearNodesButton" layoutX="1050.0" layoutY="49.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="164.0" text="Clear Nodes">
+   <Button id="clearNodesButton" fx:id="mClearNodesButton" layoutX="1050.0" layoutY="49.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="164.0" text="Clear Nodes">
       <font>
          <Font size="17.0" />
       </font>
    </Button>
-   <Button id="deleteNodeButton" fx:id="deleteNodeButton" layoutX="1050.0" layoutY="120.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="164.0" text="Delete Node">
+   <Button id="deleteNodeButton" fx:id="mDeleteNodeButton" layoutX="1050.0" layoutY="120.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="164.0" text="Delete Node">
       <font>
          <Font size="17.0" />
       </font>
@@ -29,22 +29,22 @@
          <Font size="20.0" />
       </font>
    </Text>
-   <Button id="xSmallMinusButton" alignment="CENTER" contentDisplay="CENTER" layoutX="997.0" layoutY="294.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="38.0" prefWidth="36.0" text="-" textAlignment="CENTER" fx:id="xSmallMinusButton">
+   <Button id="xSmallMinusButton" fx:id="mXSmallMinusButton" alignment="CENTER" contentDisplay="CENTER" layoutX="997.0" layoutY="294.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="38.0" prefWidth="36.0" text="-" textAlignment="CENTER">
       <font>
          <Font size="17.0" />
       </font>
    </Button>
-   <Button id="xLargeMinusButton" layoutX="1043.0" layoutY="274.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="79.0" prefWidth="43.0" text="-" fx:id="xLargeMinusButton">
+   <Button id="xLargeMinusButton" fx:id="mXLargeMinusButton" layoutX="1043.0" layoutY="274.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="79.0" prefWidth="43.0" text="-">
       <font>
          <Font name="System Bold" size="21.0" />
       </font>
    </Button>
-   <Button id="ySmallMinusButton" fx:id="ySmallMinusButton" alignment="CENTER" contentDisplay="CENTER" layoutX="997.0" layoutY="449.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="38.0" prefWidth="36.0" text="-" textAlignment="CENTER">
+   <Button id="ySmallMinusButton" fx:id="mYSmallMinusButton" alignment="CENTER" contentDisplay="CENTER" layoutX="997.0" layoutY="449.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="38.0" prefWidth="36.0" text="-" textAlignment="CENTER">
       <font>
          <Font size="17.0" />
       </font>
    </Button>
-   <Button id="exitAngleSmallMinusButton" fx:id="exitAngleSmallMinusButton" alignment="CENTER" contentDisplay="CENTER" layoutX="997.0" layoutY="603.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="38.0" prefWidth="36.0" text="-" textAlignment="CENTER">
+   <Button id="exitAngleSmallMinusButton" fx:id="mExitAngleSmallMinusButton" alignment="CENTER" contentDisplay="CENTER" layoutX="997.0" layoutY="603.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="38.0" prefWidth="36.0" text="-" textAlignment="CENTER">
       <font>
          <Font size="17.0" />
       </font>
@@ -59,71 +59,71 @@
          <Font size="20.0" />
       </font>
    </Text>
-   <Button id="xSmallPlusButton" alignment="CENTER" contentDisplay="CENTER" layoutX="1228.0" layoutY="292.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="41.0" prefWidth="36.0" text="+" textAlignment="CENTER" fx:id="xSmallPlusButton">
+   <Button id="xSmallPlusButton" fx:id="mXSmallPlusButton" alignment="CENTER" contentDisplay="CENTER" layoutX="1228.0" layoutY="292.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="41.0" prefWidth="36.0" text="+" textAlignment="CENTER">
       <font>
          <Font size="17.0" />
       </font>
    </Button>
-   <Button id="xLargePlusButton" layoutX="1178.0" layoutY="274.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="79.0" prefWidth="43.0" text="+" fx:id="xLargePlusButton">
+   <Button id="xLargePlusButton" fx:id="mXLargePlusButton" layoutX="1178.0" layoutY="274.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="79.0" prefWidth="43.0" text="+">
       <font>
          <Font name="System Bold" size="17.0" />
       </font>
    </Button>
-   <Button id="ySmallPlusButton" fx:id="ySmallPlusButton" alignment="CENTER" contentDisplay="CENTER" layoutX="1228.0" layoutY="447.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="41.0" prefWidth="36.0" text="+" textAlignment="CENTER">
+   <Button id="ySmallPlusButton" fx:id="mYSmallPlusButton" alignment="CENTER" contentDisplay="CENTER" layoutX="1228.0" layoutY="447.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="41.0" prefWidth="36.0" text="+" textAlignment="CENTER">
       <font>
          <Font size="17.0" />
       </font>
    </Button>
-   <Button id="exitAngleSmallPlusButton" fx:id="exitAngleSmallPlusButton" alignment="CENTER" contentDisplay="CENTER" layoutX="1228.0" layoutY="601.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="41.0" prefWidth="36.0" text="+" textAlignment="CENTER">
+   <Button id="exitAngleSmallPlusButton" fx:id="mExitAngleSmallPlusButton" alignment="CENTER" contentDisplay="CENTER" layoutX="1228.0" layoutY="601.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="41.0" prefWidth="36.0" text="+" textAlignment="CENTER">
       <font>
          <Font size="17.0" />
       </font>
    </Button>
-   <Button id="createTrajectoryButton" fx:id="createTrajectoryButton" layoutX="14.0" layoutY="511.0" mnemonicParsing="false" prefHeight="197.0" prefWidth="581.0" text="Create Trajectory">
+   <Button id="createTrajectoryButton" fx:id="mCreateTrajectoryButton" layoutX="14.0" layoutY="511.0" mnemonicParsing="false" prefHeight="197.0" prefWidth="193.0" text="Create&#10;Trajectory" textAlignment="CENTER">
       <font>
-         <Font size="65.0" />
+         <Font size="33.0" />
       </font>
    </Button>
-   <Button id="exitAngleLargePlusButton" fx:id="exitAngleLargePlusButton" layoutX="1178.0" layoutY="583.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="79.0" prefWidth="43.0" text="+">
-      <font>
-         <Font name="System Bold" size="17.0" />
-      </font>
-   </Button>
-   <Button id="yLargePlusButton" fx:id="yLargePlusButton" layoutX="1178.0" layoutY="430.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="79.0" prefWidth="43.0" text="+">
+   <Button id="exitAngleLargePlusButton" fx:id="mExitAngleLargePlusButton" layoutX="1178.0" layoutY="583.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="79.0" prefWidth="43.0" text="+">
       <font>
          <Font name="System Bold" size="17.0" />
       </font>
    </Button>
-   <Button id="exitAngleLargeMinusButton" fx:id="exitAngleLargeMinusButton" layoutX="1043.0" layoutY="583.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="79.0" prefWidth="43.0" text="-">
+   <Button id="yLargePlusButton" fx:id="mYLargePlusButton" layoutX="1178.0" layoutY="430.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="79.0" prefWidth="43.0" text="+">
+      <font>
+         <Font name="System Bold" size="17.0" />
+      </font>
+   </Button>
+   <Button id="exitAngleLargeMinusButton" fx:id="mExitAngleLargeMinusButton" layoutX="1043.0" layoutY="583.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="79.0" prefWidth="43.0" text="-">
       <font>
          <Font name="System Bold" size="21.0" />
       </font>
    </Button>
-   <Button id="yLargeMinusButton" fx:id="yLargeMinusButton" layoutX="1043.0" layoutY="430.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="79.0" prefWidth="43.0" text="-">
+   <Button id="yLargeMinusButton" fx:id="mYLargeMinusButton" layoutX="1043.0" layoutY="430.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="79.0" prefWidth="43.0" text="-">
       <font>
          <Font name="System Bold" size="21.0" />
       </font>
    </Button>
-   <Text id="nodeNumberText" fx:id="waypointNumberText" layoutX="1149.0" layoutY="221.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
+   <Text id="nodeNumberText" fx:id="mWaypointNumberText" layoutX="1149.0" layoutY="221.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
       <font>
          <Font size="17.0" />
       </font>
    </Text>
-   <ComboBox id="robotsComboBox" fx:id="robotsComboBox" layoutX="640.0" layoutY="609.0" prefWidth="150.0" />
-   <Text layoutX="683.0" layoutY="592.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Robot">
+   <ComboBox id="robotsComboBox" fx:id="mRobotsComboBox" layoutX="825.0" layoutY="572.0" prefWidth="150.0" />
+   <Text layoutX="868.0" layoutY="555.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Robot">
       <font>
          <Font size="24.0" />
       </font>
    </Text>
-   <ComboBox id="fieldsComboBox" fx:id="fieldsComboBox" layoutX="823.0" layoutY="609.0" prefWidth="150.0" />
-   <Text layoutX="873.0" layoutY="592.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Field">
+   <ComboBox id="fieldsComboBox" fx:id="mFieldsComboBox" layoutX="825.0" layoutY="664.0" prefWidth="150.0" />
+   <Text layoutX="875.0" layoutY="647.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Field">
       <font>
          <Font size="24.0" />
       </font>
    </Text>
    <VBox alignment="CENTER" layoutX="1086.0" layoutY="273.0" prefHeight="79.0" prefWidth="91.0" spacing="110.0">
       <children>
-         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="000.00" fx:id="xText">
+         <Text fx:id="mXText" strokeType="OUTSIDE" strokeWidth="0.0" text="000.00">
             <font>
                <Font size="26.0" />
             </font>
@@ -132,7 +132,7 @@
    </VBox>
    <VBox alignment="CENTER" layoutX="1085.0" layoutY="430.0" prefHeight="79.0" prefWidth="91.0" spacing="110.0">
       <children>
-         <Text fx:id="yText" strokeType="OUTSIDE" strokeWidth="0.0" text="000.00">
+         <Text fx:id="mYText" strokeType="OUTSIDE" strokeWidth="0.0" text="000.00">
             <font>
                <Font size="26.0" />
             </font>
@@ -141,11 +141,56 @@
    </VBox>
    <VBox alignment="CENTER" layoutX="1085.0" layoutY="582.0" prefHeight="79.0" prefWidth="91.0" spacing="110.0">
       <children>
-         <Text fx:id="exitAngleText" strokeType="OUTSIDE" strokeWidth="0.0" text="000.00">
+         <Text fx:id="mExitAngleText" strokeType="OUTSIDE" strokeWidth="0.0" text="000.00">
             <font>
                <Font size="26.0" />
             </font>
          </Text>
       </children>
    </VBox>
+   <Slider fx:id="mTimeSlider" layoutX="219.0" layoutY="670.0" majorTickUnit="1.0" max="1.0" minorTickCount="0" prefHeight="14.0" prefWidth="587.0" showTickLabels="true" showTickMarks="true" />
+   <Button fx:id="mStartPauseButton" layoutX="236.0" layoutY="571.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="119.0" text="Start">
+      <font>
+         <Font size="24.0" />
+      </font>
+   </Button>
+   <Button fx:id="mStopButton" layoutX="389.0" layoutY="572.0" mnemonicParsing="false" prefHeight="51.0" prefWidth="119.0" text="Stop">
+      <font>
+         <Font size="24.0" />
+      </font>
+   </Button>
+   <Button id="exitAngleSmallMinusButton" fx:id="mTimeSmallMinusButton" alignment="CENTER" contentDisplay="CENTER" layoutX="527.0" layoutY="578.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="38.0" prefWidth="36.0" text="-" textAlignment="CENTER">
+      <font>
+         <Font size="17.0" />
+      </font>
+   </Button>
+   <Button id="exitAngleLargeMinusButton" fx:id="mTimeLargeMinusButton" layoutX="570.0" layoutY="558.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="79.0" prefWidth="43.0" text="-">
+      <font>
+         <Font name="System Bold" size="21.0" />
+      </font>
+   </Button>
+   <Button id="exitAngleLargePlusButton" fx:id="mTimeLargePlusButton" layoutX="704.0" layoutY="558.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="79.0" prefWidth="43.0" text="+">
+      <font>
+         <Font name="System Bold" size="17.0" />
+      </font>
+   </Button>
+   <Button id="exitAngleSmallPlusButton" fx:id="mTimeSmallPlusButton" alignment="CENTER" contentDisplay="CENTER" layoutX="754.0" layoutY="576.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="41.0" prefWidth="36.0" text="+" textAlignment="CENTER">
+      <font>
+         <Font size="17.0" />
+      </font>
+   </Button>
+   <VBox alignment="CENTER" layoutX="613.0" layoutY="557.0" prefHeight="79.0" prefWidth="91.0" spacing="110.0">
+      <children>
+         <Text fx:id="mTimeText" strokeType="OUTSIDE" strokeWidth="0.0" text="000.00">
+            <font>
+               <Font size="26.0" />
+            </font>
+         </Text>
+      </children>
+   </VBox>
+   <Text layoutX="637.0" layoutY="552.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Time">
+      <font>
+         <Font size="20.0" />
+      </font>
+   </Text>
 </Pane>

@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.trajectory.constraint.TrajectoryConstraint;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -16,6 +17,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -23,6 +25,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -39,171 +42,208 @@ import java.util.ArrayList;
 public class Main extends Application
 {
     @FXML
-    Pane root;
+    Pane mRoot;
     @FXML
-    ImageView fieldImageView;
+    ImageView mFieldImageView;
     @FXML
-    Button clearNodesButton;
+    Button mClearNodesButton;
     @FXML
-    Button deleteNodeButton;
+    Button mDeleteNodeButton;
     @FXML
-    Button xSmallMinusButton;
+    Button mXSmallMinusButton;
     @FXML
-    Button xLargeMinusButton;
+    Button mXLargeMinusButton;
     @FXML
-    Button xSmallPlusButton;
+    Button mXSmallPlusButton;
     @FXML
-    Button xLargePlusButton;
+    Button mXLargePlusButton;
     @FXML
-    Button ySmallMinusButton;
+    Button mYSmallMinusButton;
     @FXML
-    Button yLargeMinusButton;
+    Button mYLargeMinusButton;
     @FXML
-    Button ySmallPlusButton;
+    Button mYSmallPlusButton;
     @FXML
-    Button yLargePlusButton;
+    Button mYLargePlusButton;
     @FXML
-    Button exitAngleSmallMinusButton;
+    Button mExitAngleSmallMinusButton;
     @FXML
-    Button exitAngleLargeMinusButton;
+    Button mExitAngleLargeMinusButton;
     @FXML
-    Button exitAngleSmallPlusButton;
+    Button mExitAngleSmallPlusButton;
     @FXML
-    Button exitAngleLargePlusButton;
+    Button mExitAngleLargePlusButton;
     @FXML
-    Button createTrajectoryButton;
+    Button mCreateTrajectoryButton;
     @FXML
-    Text waypointNumberText;
+    Text mWaypointNumberText;
     @FXML
-    Text xText;
+    Text mXText;
     @FXML
-    Text yText;
+    Text mYText;
     @FXML
-    Text exitAngleText;
+    Text mExitAngleText;
     @FXML
-    ComboBox<String> robotsComboBox;
+    ComboBox<String> mRobotsComboBox;
     @FXML
-    ComboBox<String> fieldsComboBox;
+    ComboBox<String> mFieldsComboBox;
+    @FXML
+    Button mStartPauseButton;
+    @FXML
+    Button mStopButton;
+    @FXML
+    Button mTimeSmallMinusButton;
+    @FXML
+    Button mTimeLargeMinusButton;
+    @FXML
+    Button mTimeSmallPlusButton;
+    @FXML
+    Button mTimeLargePlusButton;
+    @FXML
+    Text mTimeText;
+    @FXML
+    Slider mTimeSlider;
 
-    private Robot selectedRobot;
+    private Robot mSelectedRobot;
 
-    private ArrayList<DraggableWaypoint> waypoints = new ArrayList<>();
-    private DraggableWaypoint selectedWaypoint;
+    private ArrayList<DraggableWaypoint> mWaypoints = new ArrayList<>();
+    private DraggableWaypoint mSelectedWaypoint;
 
-    private ArrayList<Rectangle> projectedPath = new ArrayList<>();
+    private ArrayList<Rectangle> mProjectedPath = new ArrayList<>();
+
+    private int mCurrentPlaybackTimeMs = 0;
+    private int mDeltaTMs = 10;
+
+    private Trajectory mTrajectoryToFollow;
+    private Rectangle mRobotRectangle;
+    private TrajectoryFollowerState mTrajectoryFollowerState = TrajectoryFollowerState.STOPPED;
 
     @FXML
     private void initialize()
     {
         for (Field field : Fields.fields)
         {
-            fieldsComboBox.getItems().add(field.getName());
+            mFieldsComboBox.getItems().add(field.getName());
         }
-        fieldsComboBox.getSelectionModel().selectFirst();
+        mFieldsComboBox.getSelectionModel().selectFirst();
 
         for (Robot robot : Robots.robots)
         {
-            robotsComboBox.getItems().add(robot.getName());
+            mRobotsComboBox.getItems().add(robot.getName());
         }
-        robotsComboBox.getSelectionModel().selectFirst();
+        mRobotsComboBox.getSelectionModel().selectFirst();
 
         // Sets default to first field
-        fieldImageView.setImage(new Image(String.valueOf(getClass().getResource(Fields.fields[0].getPictureUrl()))));
-        fieldsComboBox.setOnAction(event ->
+        mFieldImageView.setImage(new Image(String.valueOf(getClass().getResource(Fields.fields[0].getPictureUrl()))));
+        mFieldsComboBox.setOnAction(event ->
         {
             // Sets the image displayed in the field ImageView to the newly selected field
-            fieldImageView.setImage(new Image(Fields.fields[fieldsComboBox.getSelectionModel().getSelectedIndex()].getPictureUrl()));
+            mFieldImageView.setImage(new Image(Fields.fields[mFieldsComboBox.getSelectionModel().getSelectedIndex()].getPictureUrl()));
         });
 
         // Sets default to first robot
-        selectedRobot = Robots.robots[0];
-        robotsComboBox.setOnAction(event ->
+        mSelectedRobot = Robots.robots[0];
+        mRobotRectangle = new Rectangle(mSelectedRobot.getWidthPixels(), mSelectedRobot.getLengthPixels());
+        mRobotRectangle.setLayoutX(mFieldImageView.getLayoutX() + mFieldImageView.getTranslateX());
+        mRobotRectangle.setLayoutY(mFieldImageView.getLayoutY() + mFieldImageView.getTranslateY());
+        mRobotRectangle.setTranslateX(-1000);
+        mRobotRectangle.setTranslateY(-1000);
+        mRobotRectangle.setFill(Paint.valueOf("WHITE"));
+        mRobotRectangle.setStrokeType(StrokeType.INSIDE);
+        mRobotRectangle.setStrokeWidth(2);
+        mRobotRectangle.setStroke(Paint.valueOf("BLACK"));
+        mRoot.getChildren().add(mRobotRectangle);
+        mRobotsComboBox.setOnAction(event ->
         {
             // Sets the selected robot to the newly selected robot
-            selectedRobot = Robots.robots[robotsComboBox.getSelectionModel().getSelectedIndex()];
+            mSelectedRobot = Robots.robots[mRobotsComboBox.getSelectionModel().getSelectedIndex()];
+
+            mRobotRectangle.setWidth(mSelectedRobot.getWidthPixels());
+            mRobotRectangle.setHeight(mSelectedRobot.getLengthPixels());
         });
 
-        fieldImageView.setOnMousePressed(event ->
+        mFieldImageView.setOnMousePressed(event ->
         {
-            DraggableWaypoint newWaypoint = new DraggableWaypoint(selectedRobot.getWidthPixels(), selectedRobot.getLengthPixels(), event.getX(), event.getY(), waypoints.size() + 1);
+            mStopButton.fire();
 
-            newWaypoint.constrainPosition(fieldImageView.getLayoutX() + fieldImageView.getTranslateX(),
-                    fieldImageView.getLayoutY() + fieldImageView.getTranslateY(), fieldImageView.getFitWidth(), fieldImageView.getFitHeight());
+            DraggableWaypoint newWaypoint = new DraggableWaypoint(mSelectedRobot.getWidthPixels(), mSelectedRobot.getLengthPixels(), mFieldImageView.getLayoutX() + mFieldImageView.getTranslateX(),
+                    mFieldImageView.getLayoutY() + mFieldImageView.getTranslateY(), event.getX() - mSelectedRobot.getWidthPixels() / 2, event.getY() - mSelectedRobot.getLengthPixels() / 2,
+                    mWaypoints.size() + 1);
 
-            newWaypoint.rectangle.setOnMouseDragged(mouseDraggedEvent ->
+            newWaypoint.constrainTranslation(0, 0, mFieldImageView.getFitWidth(), mFieldImageView.getFitHeight());
+
+            newWaypoint.mRectangle.setOnMouseDragged(mouseDraggedEvent ->
             {
+                mStopButton.fire();
                 newWaypoint.followMouse(mouseDraggedEvent);
-                newWaypoint.constrainPosition(fieldImageView.getLayoutX() + fieldImageView.getTranslateX(),
-                        fieldImageView.getLayoutY() + fieldImageView.getTranslateY(), fieldImageView.getFitWidth(), fieldImageView.getFitHeight());
+                newWaypoint.constrainTranslation(0, 0, mFieldImageView.getFitWidth(), mFieldImageView.getFitHeight());
                 updateDisplay(newWaypoint);
             });
 
-            newWaypoint.rankText.setOnMouseDragged(newWaypoint.rectangle.getOnMouseDragged());
+            newWaypoint.mRankText.setOnMouseDragged(newWaypoint.mRectangle.getOnMouseDragged());
 
-            newWaypoint.rotateIcon.setOnMouseDragged(mouseDraggedEvent ->
+            newWaypoint.mRotateIcon.setOnMouseDragged(mouseDraggedEvent ->
             {
+                mStopButton.fire();
                 newWaypoint.setRotate(90 - Math.toDegrees(Math.atan2((newWaypoint.getUnrotatedY() + newWaypoint.getHeight() / 2) - mouseDraggedEvent.getSceneY(),
                         mouseDraggedEvent.getSceneX() - (newWaypoint.getUnrotatedX() + newWaypoint.getWidth() / 2))));
-                newWaypoint.constrainRotation(fieldImageView.getLayoutX() + fieldImageView.getTranslateX(),
-                        fieldImageView.getLayoutY() + fieldImageView.getTranslateY(), fieldImageView.getFitWidth(), fieldImageView.getFitHeight());
+                newWaypoint.constrainRotation(0, 0, mFieldImageView.getFitWidth(), mFieldImageView.getFitHeight());
                 updateDisplay(newWaypoint);
             });
 
-            waypoints.add(newWaypoint);
-            root.getChildren().add(newWaypoint);
+            mWaypoints.add(newWaypoint);
+            mRoot.getChildren().add(newWaypoint);
         });
 
-        clearNodesButton.setOnMouseClicked(event ->
+        mClearNodesButton.setOnMouseClicked(event ->
         {
-            root.getChildren().removeAll(waypoints);
-            waypoints.clear();
+            stopTrajectoryFollower();
+            mRoot.getChildren().removeAll(mWaypoints);
+            mWaypoints.clear();
         });
 
-        deleteNodeButton.setOnMouseClicked(event ->
+        mDeleteNodeButton.setOnMouseClicked(event ->
         {
-            if (selectedWaypoint != null)
+            stopTrajectoryFollower();
+            if (mSelectedWaypoint != null)
             {
-                for (int i = waypoints.indexOf(selectedWaypoint) + 1; i < waypoints.size(); ++i)
-                    waypoints.get(i).setRank(i);
+                for (int i = mWaypoints.indexOf(mSelectedWaypoint) + 1; i < mWaypoints.size(); ++i)
+                    mWaypoints.get(i).setRank(i);
 
-                root.getChildren().remove(selectedWaypoint);
-                waypoints.remove(selectedWaypoint);
+                mRoot.getChildren().remove(mSelectedWaypoint);
+                mWaypoints.remove(mSelectedWaypoint);
 
                 updateDisplay(null);
             }
         });
 
-        createTrajectoryButton.setOnMouseClicked(event ->
+        mCreateTrajectoryButton.setOnMouseClicked(event ->
         {
             double inchesToMeters = 0.0254;
 
             ArrayList<Pose2d> poses = new ArrayList<>();
-            for (int i = 0; i < waypoints.size(); ++i)
-            {
-                poses.add(new Pose2d(waypoints.get(i).getAdjustedXInches(fieldImageView.getLayoutX() + fieldImageView.getTranslateX()),
-                        waypoints.get(i).getAdjustedYInches(fieldImageView.getLayoutY() + fieldImageView.getTranslateY()),
-                        Rotation2d.fromDegrees(waypoints.get(i).getRotate() - 90)));
-            }
+            for (DraggableWaypoint waypoint : mWaypoints)
+                poses.add(new Pose2d(waypoint.getAdjustedXInches(), waypoint.getAdjustedYInches(), Rotation2d.fromDegrees(-waypoint.getRotate() + 90)));
 
             /*
             StringBuilder trajectoryStringBuilder = new StringBuilder("Trajectory newTrajectory = TrajectoryGenerator.generateTrajectory(\n" +
-                    "new Pose2d(" + (points[0].x * inchesToMeters) + ", " + (points[0].y * inchesToMeters) + ", new Rotation2d(Math.toRadians(" + Math.toDegrees(points[0].angle) + "))),\n" +
+                    "new Pose2d(" + (poses.get(0).getTranslation().getX() * inchesToMeters) + ", " + (poses.get(0).getTranslation().getY() * inchesToMeters) + ", new Rotation2d(Math.toRadians(" + Math.toDegrees(poses.get(0).getRotation().getRadians()) + "))),\n" +
                     "List.of(\n");
 
-            for (int i = 1; i < points.length - 1; ++i)
+            for (int i = 1; i < poses.size() - 1; ++i)
             {
-                trajectoryStringBuilder.append("new Translation2d(").append(points[i].x * inchesToMeters).append(", ").append(points[i].y * inchesToMeters).append(")");
-                if (i != points.length - 2)
+                trajectoryStringBuilder.append("new Translation2d(").append(poses.get(i).getTranslation().getX() * inchesToMeters).append(", ").append(poses.get(i).getTranslation().getY() * inchesToMeters).append(")");
+                if (i != poses.size() - 2)
                     trajectoryStringBuilder.append(",");
                 trajectoryStringBuilder.append("\n");
             }
 
             trajectoryStringBuilder.append("),\n")
                     .append("new Pose2d(")
-                    .append(points[points.length - 1].x * inchesToMeters)
-                    .append(", ").append(points[points.length - 1].y * inchesToMeters)
+                    .append(poses.get(poses.size() - 1).getTranslation().getX() * inchesToMeters)
+                    .append(", ").append(poses.get(poses.size() - 1).getTranslation().getY() * inchesToMeters)
                     .append(", new Rotation2d(Math.toRadians(")
-                    .append(Math.toDegrees(points[points.length - 1].angle))
+                    .append(Math.toDegrees(poses.get(poses.size() - 1).getRotation().getRadians()))
                     .append("))),\n")
                     .append("config\n")
                     .append(");");
@@ -211,40 +251,70 @@ public class Main extends Application
             System.out.println(trajectoryStringBuilder);
             */
 
-            TrajectoryConfig config = new TrajectoryConfig(selectedRobot.getMaxVelocity(), selectedRobot.getMaxAcceleration());
+            TrajectoryConfig config = new TrajectoryConfig(mSelectedRobot.getMaxVelocity(), mSelectedRobot.getMaxAcceleration());
             Trajectory trajectory = TrajectoryGenerator.generateTrajectory(poses, config);
 
             try
             {
+                double lastLeftVelocity = 0.0;
+                double lastLeftAcceleration = 0.0;
                 FileWriter leftTrajectoryFileWriter = new FileWriter("LeftTrajectory.csv");
+                leftTrajectoryFileWriter.append("dt,x,y,position,velocity,acceleration,jerk,heading\n");
                 double leftPosition = 0.0;
-                for (int time = 0; time < trajectory.getTotalTimeSeconds() * 1000; ++time)
+                for (int timeMs = 0; timeMs < trajectory.getTotalTimeSeconds() * 1000; ++timeMs)
                 {
-                    Trajectory.State state = trajectory.sample(time / 1000.0);
-                    leftTrajectoryFileWriter.append(String.valueOf(0.001)).append(",").append(String.valueOf(state.poseMeters.getTranslation().getX()))
-                            .append(",").append(String.valueOf(state.poseMeters.getTranslation().getY())).append(",").append(String.valueOf(leftPosition))
-                            .append(",").append(String.valueOf(selectedRobot.getDriveKinematics().toWheelSpeeds(
-                            new ChassisSpeeds(state.velocityMetersPerSecond, 0, state.curvatureRadPerMeter)).leftMetersPerSecond))
+                    Trajectory.State state = trajectory.sample(timeMs / 1000.0);
+
+                    double velocity = mSelectedRobot.getDriveKinematics().toWheelSpeeds(
+                            new ChassisSpeeds(state.velocityMetersPerSecond, 0, state.velocityMetersPerSecond * state.curvatureRadPerMeter)).leftMetersPerSecond;
+                    double acceleration = velocity - lastLeftVelocity;
+                    double jerk = acceleration - lastLeftAcceleration;
+
+                    leftTrajectoryFileWriter.append(String.valueOf(1.0))
+                            .append(",").append(String.valueOf(state.poseMeters.getTranslation().getX() - (state.poseMeters.getRotation().getSin() * mSelectedRobot.getWidthInches() / 2)))
+                            .append(",").append(String.valueOf(state.poseMeters.getTranslation().getY() + (state.poseMeters.getRotation().getCos() * mSelectedRobot.getLengthInches() / 2)))
+                            .append(",").append(String.valueOf(leftPosition))
+                            .append(",").append(String.valueOf(velocity))
+                            .append(",").append(String.valueOf(acceleration))
+                            .append(",").append(String.valueOf(jerk))
+                            .append(",").append(String.valueOf(state.poseMeters.getRotation().getRadians()))
                             .append('\n');
 
-                    leftPosition += selectedRobot.getDriveKinematics().toWheelSpeeds(
-                            new ChassisSpeeds(state.velocityMetersPerSecond, 0, state.curvatureRadPerMeter)).leftMetersPerSecond * time;
+                    leftPosition += velocity / 1000.0;
+
+                    lastLeftVelocity = velocity;
+                    lastLeftAcceleration = acceleration;
                 }
                 leftTrajectoryFileWriter.close();
 
+                double lastRightVelocity = 0.0;
+                double lastRightAcceleration = 0.0;
                 FileWriter rightTrajectoryFileWriter = new FileWriter("RightTrajectory.csv");
+                rightTrajectoryFileWriter.append("dt,x,y,position,velocity,acceleration,jerk,heading\n");
                 double rightPosition = 0.0;
-                for (int time = 0; time < trajectory.getTotalTimeSeconds() * 1000; ++time)
+                for (int timeMs = 0; timeMs < trajectory.getTotalTimeSeconds() * 1000; ++timeMs)
                 {
-                    Trajectory.State state = trajectory.sample(time / 1000.0);
-                    rightTrajectoryFileWriter.append(String.valueOf(0.001)).append(",").append(String.valueOf(state.poseMeters.getTranslation().getX()))
-                            .append(",").append(String.valueOf(state.poseMeters.getTranslation().getY())).append(",").append(String.valueOf(rightPosition))
-                            .append(",").append(String.valueOf(selectedRobot.getDriveKinematics().toWheelSpeeds(
-                            new ChassisSpeeds(state.velocityMetersPerSecond, 0, state.curvatureRadPerMeter)).rightMetersPerSecond))
+                    Trajectory.State state = trajectory.sample(timeMs / 1000.0);
+
+                    double velocity = mSelectedRobot.getDriveKinematics().toWheelSpeeds(
+                            new ChassisSpeeds(state.velocityMetersPerSecond, 0, state.velocityMetersPerSecond * state.curvatureRadPerMeter)).rightMetersPerSecond;
+                    double acceleration = velocity - lastRightVelocity;
+                    double jerk = acceleration - lastRightAcceleration;
+
+                    rightTrajectoryFileWriter.append(String.valueOf(1.0))
+                            .append(",").append(String.valueOf(state.poseMeters.getTranslation().getX() + (state.poseMeters.getRotation().getSin() * mSelectedRobot.getWidthInches() / 2)))
+                            .append(",").append(String.valueOf(state.poseMeters.getTranslation().getY() - (state.poseMeters.getRotation().getCos() * mSelectedRobot.getLengthInches() / 2)))
+                            .append(",").append(String.valueOf(rightPosition))
+                            .append(",").append(String.valueOf(velocity))
+                            .append(",").append(String.valueOf(acceleration))
+                            .append(",").append(String.valueOf(jerk))
+                            .append(",").append(String.valueOf(state.poseMeters.getRotation().getRadians()))
                             .append('\n');
 
-                    rightPosition += selectedRobot.getDriveKinematics().toWheelSpeeds(
-                            new ChassisSpeeds(state.velocityMetersPerSecond, 0, state.curvatureRadPerMeter)).rightMetersPerSecond * time;
+                    rightPosition += velocity / 1000.0;
+
+                    lastRightVelocity = velocity;
+                    lastRightAcceleration = acceleration;
                 }
                 rightTrajectoryFileWriter.close();
             } catch (IOException e)
@@ -253,9 +323,9 @@ public class Main extends Application
             }
         });
 
-        root.setOnMousePressed(mousePressedEvent ->
+        mRoot.setOnMousePressed(mousePressedEvent ->
         {
-            for (DraggableWaypoint waypoint : waypoints)
+            for (DraggableWaypoint waypoint : mWaypoints)
             {
                 // If the mouse is inside the waypoint (waypoint.contains() didn't work for me)
                 if (mousePressedEvent.getX() >= waypoint.getDimensions().x
@@ -263,98 +333,100 @@ public class Main extends Application
                         && mousePressedEvent.getY() >= waypoint.getDimensions().y
                         && mousePressedEvent.getY() <= waypoint.getDimensions().y + waypoint.getHeight())
                 {
-                    selectedWaypoint = waypoint;
+                    mStopButton.fire();
 
-                    updateDisplay(selectedWaypoint);
+                    mSelectedWaypoint = waypoint;
 
-                    double smallOffset = Util.scaleDimensionUp(0.25);
-                    double largeOffset = Util.scaleDimensionUp(1.0);
+                    updateDisplay(mSelectedWaypoint);
 
-                    configureLongPressButton(xSmallMinusButton, () ->
+                    double smallOffset = Util.inchesToPixels(0.25);
+                    double largeOffset = Util.inchesToPixels(1.0);
+
+                    configureLongPressButton(mXSmallMinusButton, () ->
                     {
+                        mStopButton.fire();
                         waypoint.setTranslateX(waypoint.getTranslateX() - smallOffset);
-                        waypoint.constrainPosition(fieldImageView.getLayoutX() + fieldImageView.getTranslateX(),
-                                fieldImageView.getLayoutY() + fieldImageView.getTranslateY(), fieldImageView.getFitWidth(), fieldImageView.getFitHeight());
-                        updateDisplay(selectedWaypoint);
+                        waypoint.constrainTranslation(0, 0, mFieldImageView.getFitWidth(), mFieldImageView.getFitHeight());
+                        updateDisplay(mSelectedWaypoint);
                     });
-                    configureLongPressButton(xLargeMinusButton, () ->
+                    configureLongPressButton(mXLargeMinusButton, () ->
                     {
+                        mStopButton.fire();
                         waypoint.setTranslateX(waypoint.getTranslateX() - largeOffset);
-                        waypoint.constrainPosition(fieldImageView.getLayoutX() + fieldImageView.getTranslateX(),
-                                fieldImageView.getLayoutY() + fieldImageView.getTranslateY(), fieldImageView.getFitWidth(), fieldImageView.getFitHeight());
-                        updateDisplay(selectedWaypoint);
+                        waypoint.constrainTranslation(0, 0, mFieldImageView.getFitWidth(), mFieldImageView.getFitHeight());
+                        updateDisplay(mSelectedWaypoint);
                     });
-                    configureLongPressButton(xSmallPlusButton, () ->
+                    configureLongPressButton(mXSmallPlusButton, () ->
                     {
+                        mStopButton.fire();
                         waypoint.setTranslateX(waypoint.getTranslateX() + smallOffset);
-                        waypoint.constrainPosition(fieldImageView.getLayoutX() + fieldImageView.getTranslateX(),
-                                fieldImageView.getLayoutY() + fieldImageView.getTranslateY(), fieldImageView.getFitWidth(), fieldImageView.getFitHeight());
-                        updateDisplay(selectedWaypoint);
+                        waypoint.constrainTranslation(0, 0, mFieldImageView.getFitWidth(), mFieldImageView.getFitHeight());
+                        updateDisplay(mSelectedWaypoint);
                     });
-                    configureLongPressButton(xLargePlusButton, () ->
+                    configureLongPressButton(mXLargePlusButton, () ->
                     {
+                        mStopButton.fire();
                         waypoint.setTranslateX(waypoint.getTranslateX() + largeOffset);
-                        waypoint.constrainPosition(fieldImageView.getLayoutX() + fieldImageView.getTranslateX(),
-                                fieldImageView.getLayoutY() + fieldImageView.getTranslateY(), fieldImageView.getFitWidth(), fieldImageView.getFitHeight());
-                        updateDisplay(selectedWaypoint);
+                        waypoint.constrainTranslation(0, 0, mFieldImageView.getFitWidth(), mFieldImageView.getFitHeight());
+                        updateDisplay(mSelectedWaypoint);
                     });
 
-                    configureLongPressButton(ySmallMinusButton, () ->
+                    configureLongPressButton(mYSmallMinusButton, () ->
                     {
+                        mStopButton.fire();
                         waypoint.setTranslateY(waypoint.getTranslateY() + smallOffset);
-                        waypoint.constrainPosition(fieldImageView.getLayoutX() + fieldImageView.getTranslateX(),
-                                fieldImageView.getLayoutY() + fieldImageView.getTranslateY(), fieldImageView.getFitWidth(), fieldImageView.getFitHeight());
-                        updateDisplay(selectedWaypoint);
+                        waypoint.constrainTranslation(0, 0, mFieldImageView.getFitWidth(), mFieldImageView.getFitHeight());
+                        updateDisplay(mSelectedWaypoint);
                     });
-                    configureLongPressButton(yLargeMinusButton, () ->
+                    configureLongPressButton(mYLargeMinusButton, () ->
                     {
+                        mStopButton.fire();
                         waypoint.setTranslateY(waypoint.getTranslateY() + largeOffset);
-                        waypoint.constrainPosition(fieldImageView.getLayoutX() + fieldImageView.getTranslateX(),
-                                fieldImageView.getLayoutY() + fieldImageView.getTranslateY(), fieldImageView.getFitWidth(), fieldImageView.getFitHeight());
-                        updateDisplay(selectedWaypoint);
+                        waypoint.constrainTranslation(0, 0, mFieldImageView.getFitWidth(), mFieldImageView.getFitHeight());
+                        updateDisplay(mSelectedWaypoint);
                     });
-                    configureLongPressButton(ySmallPlusButton, () ->
+                    configureLongPressButton(mYSmallPlusButton, () ->
                     {
+                        mStopButton.fire();
                         waypoint.setTranslateY(waypoint.getTranslateY() - smallOffset);
-                        waypoint.constrainPosition(fieldImageView.getLayoutX() + fieldImageView.getTranslateX(),
-                                fieldImageView.getLayoutY() + fieldImageView.getTranslateY(), fieldImageView.getFitWidth(), fieldImageView.getFitHeight());
-                        updateDisplay(selectedWaypoint);
+                        waypoint.constrainTranslation(0, 0, mFieldImageView.getFitWidth(), mFieldImageView.getFitHeight());
+                        updateDisplay(mSelectedWaypoint);
                     });
-                    configureLongPressButton(yLargePlusButton, () ->
+                    configureLongPressButton(mYLargePlusButton, () ->
                     {
+                        mStopButton.fire();
                         waypoint.setTranslateY(waypoint.getTranslateY() - largeOffset);
-                        waypoint.constrainPosition(fieldImageView.getLayoutX() + fieldImageView.getTranslateX(),
-                                fieldImageView.getLayoutY() + fieldImageView.getTranslateY(), fieldImageView.getFitWidth(), fieldImageView.getFitHeight());
-                        updateDisplay(selectedWaypoint);
+                        waypoint.constrainTranslation(0, 0, mFieldImageView.getFitWidth(), mFieldImageView.getFitHeight());
+                        updateDisplay(mSelectedWaypoint);
                     });
 
-                    configureLongPressButton(exitAngleSmallMinusButton, () ->
+                    configureLongPressButton(mExitAngleSmallMinusButton, () ->
                     {
+                        mStopButton.fire();
                         waypoint.setRotate(waypoint.getRotate() - 0.25);
-                        waypoint.constrainRotation(fieldImageView.getLayoutX() + fieldImageView.getTranslateX(),
-                                fieldImageView.getLayoutY() + fieldImageView.getTranslateY(), fieldImageView.getFitWidth(), fieldImageView.getFitHeight());
-                        updateDisplay(selectedWaypoint);
+                        waypoint.constrainRotation(0, 0, mFieldImageView.getFitWidth(), mFieldImageView.getFitHeight());
+                        updateDisplay(mSelectedWaypoint);
                     });
-                    configureLongPressButton(exitAngleLargeMinusButton, () ->
+                    configureLongPressButton(mExitAngleLargeMinusButton, () ->
                     {
+                        mStopButton.fire();
                         waypoint.setRotate(waypoint.getRotate() - 1);
-                        waypoint.constrainRotation(fieldImageView.getLayoutX() + fieldImageView.getTranslateX(),
-                                fieldImageView.getLayoutY() + fieldImageView.getTranslateY(), fieldImageView.getFitWidth(), fieldImageView.getFitHeight());
-                        updateDisplay(selectedWaypoint);
+                        waypoint.constrainRotation(0, 0, mFieldImageView.getFitWidth(), mFieldImageView.getFitHeight());
+                        updateDisplay(mSelectedWaypoint);
                     });
-                    configureLongPressButton(exitAngleSmallPlusButton, () ->
+                    configureLongPressButton(mExitAngleSmallPlusButton, () ->
                     {
+                        mStopButton.fire();
                         waypoint.setRotate(waypoint.getRotate() + 0.25);
-                        waypoint.constrainRotation(fieldImageView.getLayoutX() + fieldImageView.getTranslateX(),
-                                fieldImageView.getLayoutY() + fieldImageView.getTranslateY(), fieldImageView.getFitWidth(), fieldImageView.getFitHeight());
-                        updateDisplay(selectedWaypoint);
+                        waypoint.constrainRotation(0, 0, mFieldImageView.getFitWidth(), mFieldImageView.getFitHeight());
+                        updateDisplay(mSelectedWaypoint);
                     });
-                    configureLongPressButton(exitAngleLargePlusButton, () ->
+                    configureLongPressButton(mExitAngleLargePlusButton, () ->
                     {
+                        mStopButton.fire();
                         waypoint.setRotate(waypoint.getRotate() + 1);
-                        waypoint.constrainRotation(fieldImageView.getLayoutX() + fieldImageView.getTranslateX(),
-                                fieldImageView.getLayoutY() + fieldImageView.getTranslateY(), fieldImageView.getFitWidth(), fieldImageView.getFitHeight());
-                        updateDisplay(selectedWaypoint);
+                        waypoint.constrainRotation(0, 0, mFieldImageView.getFitWidth(), mFieldImageView.getFitHeight());
+                        updateDisplay(mSelectedWaypoint);
                     });
 
                     break;
@@ -365,75 +437,172 @@ public class Main extends Application
         final Timeline lineDrawer = new Timeline(
                 new KeyFrame(Duration.ZERO, event ->
                 {
-                    for (Rectangle circle : projectedPath)
-                    {
-                        root.getChildren().remove(circle);
-                    }
+                    for (Rectangle circle : mProjectedPath)
+                        mRoot.getChildren().remove(circle);
 
-                    projectedPath.clear();
+                    mProjectedPath.clear();
 
-                    if (waypoints.size() >= 2)
+                    if (mWaypoints.size() >= 2)
                     {
                         ArrayList<Pose2d> poses = new ArrayList<>();
-                        for (int i = 0; i < waypoints.size(); ++i)
-                        {
-                            poses.add(new Pose2d(waypoints.get(i).getAdjustedXInches(fieldImageView.getLayoutX() + fieldImageView.getTranslateX()),
-                                    waypoints.get(i).getAdjustedYInches(fieldImageView.getLayoutY() + fieldImageView.getTranslateY()),
-                                    Rotation2d.fromDegrees(waypoints.get(i).getRotate() - 90)));
-                        }
+                        for (DraggableWaypoint waypoint : mWaypoints)
+                            poses.add(new Pose2d(Util.pixelsToInches(waypoint.getDimensions().center.getX()), Util.pixelsToInches(waypoint.getDimensions().center.getY()),
+                                    Rotation2d.fromDegrees(waypoint.getRotate() - 90)));
 
-                        TrajectoryConfig config = new TrajectoryConfig(selectedRobot.getMaxVelocity(), selectedRobot.getMaxAcceleration());
+                        TrajectoryConfig config = new TrajectoryConfig(mSelectedRobot.getMaxVelocity(), mSelectedRobot.getMaxAcceleration());
                         Trajectory trajectory = TrajectoryGenerator.generateTrajectory(poses, config);
 
-                        for (double time = 0; time < trajectory.getTotalTimeSeconds(); time += trajectory.getTotalTimeSeconds() / 30.0)
+                        for (double timeSeconds = 0; timeSeconds < trajectory.getTotalTimeSeconds(); timeSeconds += trajectory.getTotalTimeSeconds() / 30.0)
                         {
-                            Rectangle rectangle = new Rectangle();
-                            rectangle.setWidth(selectedRobot.getWidthPixels());
-                            rectangle.setHeight(selectedRobot.getLengthPixels());
+                            Rectangle rectangle = new Rectangle(mSelectedRobot.getWidthPixels(), mSelectedRobot.getLengthPixels());
                             rectangle.setFill(Paint.valueOf("BLACK"));
-                            rectangle.setX(Util.scaleDimensionUp(trajectory.sample(time).poseMeters.getTranslation().getX()) - 10);
-                            rectangle.setY(Util.scaleDimensionUp(trajectory.sample(time).poseMeters.getTranslation().getY()) - 14.5);
-                            rectangle.setRotate(trajectory.sample(time).poseMeters.getRotation().getDegrees() + 90);
+                            rectangle.setLayoutX(mFieldImageView.getLayoutX() + mFieldImageView.getTranslateX());
+                            rectangle.setLayoutY(mFieldImageView.getLayoutY() + mFieldImageView.getTranslateY());
+                            rectangle.setTranslateX(Util.inchesToPixels(trajectory.sample(timeSeconds).poseMeters.getTranslation().getX()) - mSelectedRobot.getWidthPixels() / 2);
+                            rectangle.setTranslateY(Util.inchesToPixels(trajectory.sample(timeSeconds).poseMeters.getTranslation().getY()) - mSelectedRobot.getLengthPixels() / 2);
+                            rectangle.setRotate(trajectory.sample(timeSeconds).poseMeters.getRotation().getDegrees() + 90);
 
-                            if (rectangle.getX() > fieldImageView.getLayoutX() + fieldImageView.getTranslateX()
-                                    && rectangle.getX() + rectangle.getWidth() < fieldImageView.getLayoutX() + fieldImageView.getTranslateX() + fieldImageView.getFitWidth()
-                                    && rectangle.getY() > fieldImageView.getLayoutY() + fieldImageView.getTranslateY()
-                                    && rectangle.getY() + rectangle.getHeight() < fieldImageView.getLayoutY() + fieldImageView.getTranslateY() + fieldImageView.getFitHeight())
+                            if (rectangle.getTranslateX() > 0
+                                    && rectangle.getTranslateX() + rectangle.getWidth() < mFieldImageView.getTranslateX() + mFieldImageView.getFitWidth()
+                                    && rectangle.getTranslateY() > mFieldImageView.getTranslateY()
+                                    && rectangle.getTranslateY() + rectangle.getHeight() < mFieldImageView.getTranslateY() + mFieldImageView.getFitHeight())
                             {
-                                projectedPath.add(rectangle);
-                                root.getChildren().add(rectangle);
+                                mProjectedPath.add(rectangle);
+                                mRoot.getChildren().add(rectangle);
                             }
                         }
-
-                        for (DraggableWaypoint waypoint : waypoints)
-                        {
-                            waypoint.toFront();
-                        }
                     }
+
+                    for (DraggableWaypoint waypoint : mWaypoints)
+                        waypoint.toFront();
+
+                    if (mTrajectoryFollowerState != TrajectoryFollowerState.STOPPED)
+                        mRobotRectangle.toFront();
                 }),
                 new KeyFrame(Duration.millis(25))
         );
         lineDrawer.setCycleCount(Timeline.INDEFINITE);
 
         lineDrawer.play();
+
+        final Timeline trajectoryFollower = new Timeline(
+                new KeyFrame(Duration.ZERO, event ->
+                {
+                    if (mTrajectoryFollowerState == TrajectoryFollowerState.RUNNING)
+                    {
+                        if (mCurrentPlaybackTimeMs < mTrajectoryToFollow.getTotalTimeSeconds() * 1000)
+                        {
+                            updateTrajectoryFollowerDisplay();
+                            advanceTrajectory();
+                            mCurrentPlaybackTimeMs += mDeltaTMs;
+                        } else
+                            stopTrajectoryFollower();
+                    }
+                }),
+                new KeyFrame(Duration.millis(mDeltaTMs))
+        );
+        trajectoryFollower.setCycleCount(Timeline.INDEFINITE);
+        trajectoryFollower.play();
+
+        mStartPauseButton.setOnAction((event) ->
+        {
+            switch (mTrajectoryFollowerState)
+            {
+                case STOPPED:
+                    ArrayList<Pose2d> poses = new ArrayList<>();
+                    for (DraggableWaypoint waypoint : mWaypoints)
+                        poses.add(new Pose2d(Util.pixelsToInches(waypoint.getDimensions().center.getX()), Util.pixelsToInches(waypoint.getDimensions().center.getY()),
+                                Rotation2d.fromDegrees(waypoint.getRotate() - 90)));
+
+                    TrajectoryConfig config = new TrajectoryConfig(mSelectedRobot.getMaxVelocity(), mSelectedRobot.getMaxAcceleration());
+                    mTrajectoryToFollow = TrajectoryGenerator.generateTrajectory(poses, config);
+
+                    startTrajectoryFollower();
+                    break;
+                case RUNNING:
+                    mStartPauseButton.setText("Start");
+                    mTrajectoryFollowerState = TrajectoryFollowerState.PAUSED;
+                    break;
+                case PAUSED:
+                    mTrajectoryFollowerState = TrajectoryFollowerState.RUNNING;
+                    break;
+            }
+        });
+
+        mStopButton.setOnAction((event) -> stopTrajectoryFollower());
+
+        mTimeSlider.setOnMouseDragged((event) ->
+        {
+            if (mTrajectoryFollowerState == TrajectoryFollowerState.STOPPED)
+            {
+                mStartPauseButton.fire();
+                mStartPauseButton.fire();
+            }
+
+            mCurrentPlaybackTimeMs = (int) (mTimeSlider.getValue() * 1000);
+            updateTrajectoryFollowerDisplay();
+            advanceTrajectory();
+        });
+
+        mTimeSmallMinusButton.setOnAction((event) ->
+        {
+            mCurrentPlaybackTimeMs -= 10;
+            updateTrajectoryFollowerDisplay();
+            advanceTrajectory();
+        });
+        mTimeLargeMinusButton.setOnAction((event) ->
+        {
+            mCurrentPlaybackTimeMs -= 250;
+            updateTrajectoryFollowerDisplay();
+            advanceTrajectory();
+        });
+        mTimeSmallPlusButton.setOnAction((event) ->
+        {
+            mCurrentPlaybackTimeMs += 10;
+            updateTrajectoryFollowerDisplay();
+            advanceTrajectory();
+        });
+        mTimeLargePlusButton.setOnAction((event) ->
+        {
+            mCurrentPlaybackTimeMs += 250;
+            updateTrajectoryFollowerDisplay();
+            advanceTrajectory();
+        });
     }
 
     private void updateDisplay(DraggableWaypoint waypoint)
     {
         if (waypoint == null)
         {
-            waypointNumberText.setText("");
-            xText.setText("0.0");
-            yText.setText("0.0");
-            exitAngleText.setText("0.0");
+            mWaypointNumberText.setText("");
+            mXText.setText("0.0");
+            mYText.setText("0.0");
+            mExitAngleText.setText("0.0");
         } else
         {
             DecimalFormat formatter = new DecimalFormat("000.00");
-            waypointNumberText.setText(String.valueOf(waypoints.indexOf(waypoint) + 1));
-            xText.setText(formatter.format(waypoint.getAdjustedXInches(fieldImageView.getLayoutX() + fieldImageView.getTranslateX())));
-            yText.setText(formatter.format(waypoint.getAdjustedYInches(fieldImageView.getLayoutY() + fieldImageView.getTranslateY())));
-            exitAngleText.setText(formatter.format(waypoint.getRotate()));
+            mWaypointNumberText.setText(String.valueOf(mWaypoints.indexOf(waypoint) + 1));
+            mXText.setText(formatter.format(waypoint.getAdjustedXInches()));
+            mYText.setText(formatter.format(waypoint.getAdjustedYInches()));
+            mExitAngleText.setText(formatter.format(waypoint.getRotate()));
         }
+    }
+
+    private void startTrajectoryFollower()
+    {
+        mTimeSlider.setMax(mTrajectoryToFollow.getTotalTimeSeconds());
+        mStartPauseButton.setText("Pause");
+        mTrajectoryFollowerState = TrajectoryFollowerState.RUNNING;
+    }
+
+    private void stopTrajectoryFollower()
+    {
+        mCurrentPlaybackTimeMs = 0;
+        mTimeSlider.setMax(1);
+        mStartPauseButton.setText("Start");
+        mRobotRectangle.toBack();
+        updateTrajectoryFollowerDisplay();
+        mTrajectoryFollowerState = TrajectoryFollowerState.STOPPED;
     }
 
     private void configureLongPressButton(Button button, Runnable onClick)
@@ -471,6 +640,27 @@ public class Main extends Application
 
         button.setOnMouseClicked(event ->
                 onClick.run());
+    }
+
+    private void updateTrajectoryFollowerDisplay()
+    {
+        DecimalFormat formatter = new DecimalFormat("00.000");
+        mTimeText.setText(formatter.format(mCurrentPlaybackTimeMs / 1000.0));
+        mTimeSlider.setValue(mCurrentPlaybackTimeMs / 1000.0);
+    }
+
+    private void advanceTrajectory()
+    {
+        Trajectory.State state = mTrajectoryToFollow.sample(mCurrentPlaybackTimeMs / 1000.0);
+        mRobotRectangle.setTranslateX(Util.inchesToPixels(state.poseMeters.getTranslation().getX()) - mSelectedRobot.getWidthPixels() / 2);
+        mRobotRectangle.setTranslateY(Util.inchesToPixels(state.poseMeters.getTranslation().getY()) - mSelectedRobot.getLengthPixels() / 2);
+        mRobotRectangle.setRotate(state.poseMeters.getRotation().getDegrees() + 90);
+        mRobotRectangle.toFront();
+    }
+
+    private enum TrajectoryFollowerState
+    {
+        RUNNING, PAUSED, STOPPED
     }
 
     @Override
