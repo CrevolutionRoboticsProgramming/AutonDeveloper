@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj.trajectory.constraint.TrajectoryConstraint;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -251,7 +250,7 @@ public class Main extends Application
             System.out.println(trajectoryStringBuilder);
             */
 
-            TrajectoryConfig config = new TrajectoryConfig(mSelectedRobot.getMaxVelocity(), mSelectedRobot.getMaxAcceleration());
+            TrajectoryConfig config = new TrajectoryConfig(mSelectedRobot.getMaxVelocity(), mSelectedRobot.getMaxAcceleration()).setKinematics(mSelectedRobot.getDriveKinematics());
             Trajectory trajectory = TrajectoryGenerator.generateTrajectory(poses, config);
 
             try
@@ -449,7 +448,7 @@ public class Main extends Application
                             poses.add(new Pose2d(Util.pixelsToInches(waypoint.getDimensions().center.getX()), Util.pixelsToInches(waypoint.getDimensions().center.getY()),
                                     Rotation2d.fromDegrees(waypoint.getRotate() - 90)));
 
-                        TrajectoryConfig config = new TrajectoryConfig(mSelectedRobot.getMaxVelocity(), mSelectedRobot.getMaxAcceleration());
+                        TrajectoryConfig config = new TrajectoryConfig(mSelectedRobot.getMaxVelocity(), mSelectedRobot.getMaxAcceleration()).setKinematics(mSelectedRobot.getDriveKinematics());
                         Trajectory trajectory = TrajectoryGenerator.generateTrajectory(poses, config);
 
                         for (double timeSeconds = 0; timeSeconds < trajectory.getTotalTimeSeconds(); timeSeconds += trajectory.getTotalTimeSeconds() / 30.0)
@@ -514,7 +513,7 @@ public class Main extends Application
                         poses.add(new Pose2d(Util.pixelsToInches(waypoint.getDimensions().center.getX()), Util.pixelsToInches(waypoint.getDimensions().center.getY()),
                                 Rotation2d.fromDegrees(waypoint.getRotate() - 90)));
 
-                    TrajectoryConfig config = new TrajectoryConfig(mSelectedRobot.getMaxVelocity(), mSelectedRobot.getMaxAcceleration());
+                    TrajectoryConfig config = new TrajectoryConfig(mSelectedRobot.getMaxVelocity(), mSelectedRobot.getMaxAcceleration()).setKinematics(mSelectedRobot.getDriveKinematics());
                     mTrajectoryToFollow = TrajectoryGenerator.generateTrajectory(poses, config);
 
                     startTrajectoryFollower();
