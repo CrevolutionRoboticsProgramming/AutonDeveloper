@@ -25,7 +25,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
-import javafx.scene.text.Text;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.frc2851.field.Field;
@@ -75,13 +75,13 @@ public class Main extends Application
     @FXML
     Button mCreateTrajectoryButton;
     @FXML
-    Text mWaypointNumberText;
+    Label mWaypointNumberLabel;
     @FXML
-    Text mXText;
+    Label mXLabel;
     @FXML
-    Text mYText;
+    Label mYLabel;
     @FXML
-    Text mExitAngleText;
+    Label mExitAngleLabel;
     @FXML
     ComboBox<String> mRobotsComboBox;
     @FXML
@@ -99,7 +99,7 @@ public class Main extends Application
     @FXML
     Button mTimeLargePlusButton;
     @FXML
-    Text mTimeText;
+    Label mTimeLabel;
     @FXML
     Slider mTimeSlider;
 
@@ -179,7 +179,7 @@ public class Main extends Application
                 updateDisplay(newWaypoint);
             });
 
-            newWaypoint.mRankText.setOnMouseDragged(newWaypoint.mRectangle.getOnMouseDragged());
+            newWaypoint.mRankLabel.setOnMouseDragged(newWaypoint.mRectangle.getOnMouseDragged());
 
             newWaypoint.mRotateIcon.setOnMouseDragged(mouseDraggedEvent ->
             {
@@ -575,17 +575,17 @@ public class Main extends Application
     {
         if (waypoint == null)
         {
-            mWaypointNumberText.setText("");
-            mXText.setText("0.0");
-            mYText.setText("0.0");
-            mExitAngleText.setText("0.0");
+            mWaypointNumberLabel.setText("");
+            mXLabel.setText("0.0");
+            mYLabel.setText("0.0");
+            mExitAngleLabel.setText("0.0");
         } else
         {
             DecimalFormat formatter = new DecimalFormat("000.00");
-            mWaypointNumberText.setText(String.valueOf(mWaypoints.indexOf(waypoint) + 1));
-            mXText.setText(formatter.format(waypoint.getAdjustedXInches()));
-            mYText.setText(formatter.format(waypoint.getAdjustedYInches()));
-            mExitAngleText.setText(formatter.format(waypoint.getRotate()));
+            mWaypointNumberLabel.setText(String.valueOf(mWaypoints.indexOf(waypoint) + 1));
+            mXLabel.setText(formatter.format(waypoint.getAdjustedXInches()));
+            mYLabel.setText(formatter.format(waypoint.getAdjustedYInches()));
+            mExitAngleLabel.setText(formatter.format(waypoint.getRotate()));
         }
     }
 
@@ -646,7 +646,7 @@ public class Main extends Application
     private void updateTrajectoryFollowerDisplay()
     {
         DecimalFormat formatter = new DecimalFormat("00.000");
-        mTimeText.setText(formatter.format(mCurrentPlaybackTimeMs / 1000.0));
+        mTimeLabel.setText(formatter.format(mCurrentPlaybackTimeMs / 1000.0));
         mTimeSlider.setValue(mCurrentPlaybackTimeMs / 1000.0);
     }
 

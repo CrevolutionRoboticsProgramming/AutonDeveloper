@@ -1,21 +1,25 @@
 package org.frc2851;
 
+import com.sun.javafx.tk.Toolkit;
 import javafx.geometry.Point2D;
+import javafx.scene.effect.BlurType;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
+import javafx.scene.control.Label;
 
 public class DraggableWaypoint extends Region
 {
     public Rectangle mRectangle;
     public ImageView mRotateIcon;
-    public Text mRankText;
+    public Label mRankLabel;
     private Point2D mMouseOffset;
 
     public DraggableWaypoint(double width, double length, double xOffset, double yOffset, double x, double y, int rank)
@@ -43,12 +47,17 @@ public class DraggableWaypoint extends Region
 
         setOnMousePressed((event) -> mMouseOffset = new Point2D(event.getSceneX() - getDimensions().x, event.getSceneY() - getDimensions().y));
 
-        mRankText = new Text();
+        mRankLabel = new Label();
 
-        mRankText.setText(String.valueOf(rank));
-        mRankText.setFont(Font.font("system", FontWeight.EXTRA_BOLD, 20));
-        mRankText.setX(width / 2 - mRankText.getLayoutBounds().getWidth() / 2);
-        mRankText.setY(length / 2 + mRankText.getLayoutBounds().getHeight() / 1.5);
+        mRankLabel.setText(String.valueOf(rank));
+        mRankLabel.setFont(Font.font("Courier New", FontWeight.EXTRA_BOLD, 20));
+        mRankLabel.setTranslateX(width / 2 - (Toolkit.getToolkit().getFontLoader().getCharWidth('0', mRankLabel.getFont()) * (rank < 10 ? 1 : 2) / 2));
+        mRankLabel.setTranslateY(length / 2 + 2);
+        mRankLabel.setEffect(new DropShadow(BlurType.ONE_PASS_BOX, Color.valueOf("black"), 10, 1, 0, 0));
+
+        System.out.println("Pref width: " + mRankLabel.getPrefWidth());
+        System.out.println("Layout bounds width: " + mRankLabel.getLayoutBounds().getWidth());
+        System.out.println("Toolkit: " + Toolkit.getToolkit().getFontLoader().getCharWidth('0', Font.font("Courier New", FontWeight.EXTRA_BOLD, 20)));
 
         mRotateIcon = new ImageView(String.valueOf(getClass().getResource("/org/frc2851/RotateIcon.png")));
         mRotateIcon.setFitWidth(width / 2);
@@ -56,7 +65,7 @@ public class DraggableWaypoint extends Region
         mRotateIcon.setFitHeight(mRotateIcon.getFitWidth());
         mRotateIcon.setY((length - mRotateIcon.getFitHeight()) / 6);
 
-        getChildren().addAll(mRectangle, mRankText, mRotateIcon);
+        getChildren().addAll(mRectangle, mRankLabel, mRotateIcon);
     }
 
     public void followMouse(MouseEvent mouseDraggedEvent)
@@ -111,7 +120,7 @@ public class DraggableWaypoint extends Region
 
     public void setRank(int rank)
     {
-        mRankText.setText(String.valueOf(rank));
+        mRankLabel.setText(String.valueOf(rank));
     }
 
     public Dimensions getDimensions()

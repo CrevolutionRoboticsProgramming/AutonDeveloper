@@ -5,192 +5,192 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<Pane fx:id="mRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: #25272a;" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.frc2851.Main">
+<Pane fx:id="mRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" stylesheets="@css/DarkMode.css" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.frc2851.Main">
    <ImageView fx:id="mFieldImageView" fitHeight="486.0" fitWidth="972.0" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
       <Image url="@field/InfiniteRecharge.png" />
    </ImageView>
-   <Button fx:id="mClearNodesButton" layoutX="1050.0" layoutY="49.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="164.0" style="-fx-background-color: #595e66; -fx-border-color: WHITE; -fx-text-fill: WHITE;" text="Clear Nodes">
+   <Button fx:id="mClearNodesButton" layoutX="1050.0" layoutY="49.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="164.0" text="Clear Nodes">
       <font>
-         <Font size="17.0" />
+         <Font name="Courier New" size="20.0" />
       </font>
    </Button>
-   <Button fx:id="mDeleteNodeButton" layoutX="1050.0" layoutY="120.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="164.0" style="-fx-background-color: #595e66; -fx-border-color: WHITE; -fx-text-fill: WHITE;" text="Delete Node">
+   <Button fx:id="mDeleteNodeButton" layoutX="1050.0" layoutY="120.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="164.0" text="Delete Node">
       <font>
-         <Font size="17.0" />
+         <Font name="Courier New" size="20.0" />
       </font>
    </Button>
-   <Text layoutX="1086.0" layoutY="222.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: WHITE;" text="Node #">
+   <Label layoutX="1086.0" layoutY="216.0" style="-fx-fill: WHITE;" text="Node #">
       <font>
-         <Font size="17.0" />
+         <Font name="Courier New" size="20.0" />
       </font>
-   </Text>
-   <Text layoutX="1126.0" layoutY="262.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: WHITE;" text="X">
+   </Label>
+   <Label layoutX="1125.0" layoutY="258.0" style="-fx-fill: WHITE;" text="X">
       <font>
-         <Font size="20.0" />
+         <Font name="Courier New" size="20.0" />
       </font>
-   </Text>
-   <Button fx:id="mXSmallMinusButton" alignment="CENTER" contentDisplay="CENTER" layoutX="996.0" layoutY="296.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: #595e66; -fx-border-color: WHITE; -fx-text-fill: WHITE;" text="-" textAlignment="CENTER">
+   </Label>
+   <Button fx:id="mXSmallMinusButton" alignment="CENTER" contentDisplay="CENTER" layoutX="996.0" layoutY="296.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="-" textAlignment="CENTER">
       <font>
-         <Font size="17.0" />
-      </font>
-   </Button>
-   <Button fx:id="mXLargeMinusButton" layoutX="1043.0" layoutY="274.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="79.0" prefWidth="43.0" style="-fx-background-color: #595e66; -fx-border-color: WHITE; -fx-text-fill: WHITE;" text="-">
-      <font>
-         <Font name="System Bold" size="21.0" />
+         <Font name="Courier New" size="18.0" />
       </font>
    </Button>
-   <Button fx:id="mYSmallMinusButton" alignment="CENTER" contentDisplay="CENTER" layoutX="996.0" layoutY="451.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: #595e66; -fx-border-color: WHITE; -fx-text-fill: WHITE;" text="-" textAlignment="CENTER">
+   <Button fx:id="mXLargeMinusButton" layoutX="1043.0" layoutY="274.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="79.0" prefWidth="43.0" text="-">
       <font>
-         <Font size="17.0" />
+         <Font name="Courier New" size="18.0" />
       </font>
    </Button>
-   <Button fx:id="mExitAngleSmallMinusButton" alignment="CENTER" contentDisplay="CENTER" layoutX="996.0" layoutY="605.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: #595e66; -fx-border-color: WHITE; -fx-text-fill: WHITE;" text="-" textAlignment="CENTER">
+   <Button fx:id="mYSmallMinusButton" alignment="CENTER" contentDisplay="CENTER" layoutX="996.0" layoutY="451.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="-" textAlignment="CENTER">
       <font>
-         <Font size="17.0" />
+         <Font name="Courier New" size="18.0" />
       </font>
    </Button>
-   <Text layoutX="1126.0" layoutY="411.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: WHITE;" text="Y">
+   <Button fx:id="mExitAngleSmallMinusButton" alignment="CENTER" contentDisplay="CENTER" layoutX="996.0" layoutY="605.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="-" textAlignment="CENTER">
       <font>
-         <Font size="20.0" />
-      </font>
-   </Text>
-   <Text layoutX="1043.0" layoutY="558.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: WHITE;" text="Exit Angle (Degrees)">
-      <font>
-         <Font size="20.0" />
-      </font>
-   </Text>
-   <Button fx:id="mXSmallPlusButton" alignment="CENTER" contentDisplay="CENTER" layoutX="1227.0" layoutY="294.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: #595e66; -fx-border-color: WHITE; -fx-text-fill: WHITE;" text="+" textAlignment="CENTER">
-      <font>
-         <Font size="17.0" />
+         <Font name="Courier New" size="18.0" />
       </font>
    </Button>
-   <Button fx:id="mXLargePlusButton" layoutX="1178.0" layoutY="274.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="79.0" prefWidth="43.0" style="-fx-background-color: #595e66; -fx-border-color: WHITE; -fx-text-fill: WHITE;" text="+">
+   <Label layoutX="1125.0" layoutY="415.0" style="-fx-fill: WHITE;" text="Y">
       <font>
-         <Font name="System Bold" size="17.0" />
+         <Font name="Courier New" size="20.0" />
+      </font>
+   </Label>
+   <Label layoutX="1017.0" layoutY="552.0" style="-fx-fill: WHITE;" text="Exit Angle (Degrees)">
+      <font>
+         <Font name="Courier New" size="20.0" />
+      </font>
+   </Label>
+   <Button fx:id="mXSmallPlusButton" alignment="CENTER" contentDisplay="CENTER" layoutX="1227.0" layoutY="294.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="+" textAlignment="CENTER">
+      <font>
+         <Font name="Courier New" size="18.0" />
       </font>
    </Button>
-   <Button fx:id="mYSmallPlusButton" alignment="CENTER" contentDisplay="CENTER" layoutX="1227.0" layoutY="449.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: #595e66; -fx-border-color: WHITE; -fx-text-fill: WHITE;" text="+" textAlignment="CENTER">
+   <Button fx:id="mXLargePlusButton" layoutX="1178.0" layoutY="274.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="79.0" prefWidth="43.0" text="+">
       <font>
-         <Font size="17.0" />
+         <Font name="Courier New" size="18.0" />
       </font>
    </Button>
-   <Button fx:id="mExitAngleSmallPlusButton" alignment="CENTER" contentDisplay="CENTER" layoutX="1227.0" layoutY="603.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: #595e66; -fx-border-color: WHITE; -fx-text-fill: WHITE;" text="+" textAlignment="CENTER">
+   <Button fx:id="mYSmallPlusButton" alignment="CENTER" contentDisplay="CENTER" layoutX="1227.0" layoutY="449.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="+" textAlignment="CENTER">
       <font>
-         <Font size="17.0" />
+         <Font name="Courier New" size="18.0" />
       </font>
    </Button>
-   <Button fx:id="mCreateTrajectoryButton" layoutX="14.0" layoutY="511.0" mnemonicParsing="false" prefHeight="197.0" prefWidth="193.0" style="-fx-background-color: #595e66; -fx-border-color: WHITE; -fx-text-fill: WHITE;" text="Create&#10;Trajectory" textAlignment="CENTER">
+   <Button fx:id="mExitAngleSmallPlusButton" alignment="CENTER" contentDisplay="CENTER" layoutX="1227.0" layoutY="603.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="+" textAlignment="CENTER">
       <font>
-         <Font size="33.0" />
+         <Font name="Courier New" size="18.0" />
       </font>
    </Button>
-   <Button fx:id="mExitAngleLargePlusButton" layoutX="1178.0" layoutY="583.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="79.0" prefWidth="43.0" style="-fx-background-color: #595e66; -fx-border-color: WHITE; -fx-text-fill: WHITE;" text="+">
+   <Button fx:id="mCreateTrajectoryButton" layoutX="14.0" layoutY="511.0" mnemonicParsing="false" prefHeight="197.0" prefWidth="193.0" text="Create&#10;Trajectory" textAlignment="CENTER">
       <font>
-         <Font name="System Bold" size="17.0" />
+         <Font name="Courier New" size="25.0" />
       </font>
    </Button>
-   <Button fx:id="mYLargePlusButton" layoutX="1178.0" layoutY="430.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="79.0" prefWidth="43.0" style="-fx-background-color: #595e66; -fx-border-color: WHITE; -fx-text-fill: WHITE;" text="+">
+   <Button fx:id="mExitAngleLargePlusButton" layoutX="1178.0" layoutY="583.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="79.0" prefWidth="43.0" text="+">
       <font>
-         <Font name="System Bold" size="17.0" />
+         <Font name="Courier New" size="18.0" />
       </font>
    </Button>
-   <Button fx:id="mExitAngleLargeMinusButton" layoutX="1043.0" layoutY="583.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="79.0" prefWidth="43.0" style="-fx-background-color: #595e66; -fx-border-color: WHITE; -fx-text-fill: WHITE;" text="-">
+   <Button fx:id="mYLargePlusButton" layoutX="1178.0" layoutY="430.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="79.0" prefWidth="43.0" text="+">
       <font>
-         <Font name="System Bold" size="21.0" />
+         <Font name="Courier New" size="18.0" />
       </font>
    </Button>
-   <Button fx:id="mYLargeMinusButton" layoutX="1043.0" layoutY="430.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="79.0" prefWidth="43.0" style="-fx-background-color: #595e66; -fx-border-color: WHITE; -fx-text-fill: WHITE;" text="-">
+   <Button fx:id="mExitAngleLargeMinusButton" layoutX="1043.0" layoutY="583.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="79.0" prefWidth="43.0" text="-">
       <font>
-         <Font name="System Bold" size="21.0" />
+         <Font name="Courier New" size="18.0" />
       </font>
    </Button>
-   <Text fx:id="mWaypointNumberText" layoutX="1149.0" layoutY="221.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: WHITE;" text="0">
+   <Button fx:id="mYLargeMinusButton" layoutX="1043.0" layoutY="430.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="79.0" prefWidth="43.0" text="-">
       <font>
-         <Font size="17.0" />
+         <Font name="Courier New" size="18.0" />
       </font>
-   </Text>
-   <ComboBox fx:id="mRobotsComboBox" layoutX="825.0" layoutY="572.0" prefWidth="150.0" style="-fx-background-color: #595e66; -fx-text-fill: WHITE;" stylesheets="@css/ComboBox.css" />
-   <Text layoutX="868.0" layoutY="555.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: WHITE;" text="Robot">
+   </Button>
+   <Label fx:id="mWaypointNumberLabel" layoutX="1166.0" layoutY="216.0" prefHeight="24.0" prefWidth="12.0" style="-fx-fill: WHITE;" text="0">
       <font>
-         <Font size="24.0" />
+         <Font name="Courier New" size="20.0" />
       </font>
-   </Text>
-   <ComboBox fx:id="mFieldsComboBox" layoutX="825.0" layoutY="664.0" prefWidth="150.0" style="-fx-background-color: #595e66; -fx-text-fill: WHITE;" stylesheets="@css/ComboBox.css" />
-   <Text layoutX="875.0" layoutY="647.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: WHITE;" text="Field">
+   </Label>
+   <ComboBox fx:id="mRobotsComboBox" layoutX="818.0" layoutY="571.0" prefHeight="25.0" prefWidth="164.0" />
+   <Label layoutX="868.0" layoutY="540.0" style="-fx-fill: WHITE;" text="Robot">
       <font>
-         <Font size="24.0" />
+         <Font name="Courier New" size="20.0" />
       </font>
-   </Text>
+   </Label>
+   <ComboBox fx:id="mFieldsComboBox" layoutX="818.0" layoutY="662.0" prefHeight="25.0" prefWidth="164.0" />
+   <Label layoutX="870.0" layoutY="631.0" style="-fx-fill: WHITE;" text="Field">
+      <font>
+         <Font name="Courier New" size="20.0" />
+      </font>
+   </Label>
    <VBox alignment="CENTER" layoutX="1086.0" layoutY="273.0" prefHeight="79.0" prefWidth="91.0" spacing="110.0">
       <children>
-         <Text fx:id="mXText" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: WHITE;" text="000.00">
+         <Label fx:id="mXLabel" style="-fx-fill: WHITE;" text="000.00">
             <font>
-               <Font size="26.0" />
+               <Font name="Courier New" size="20.0" />
             </font>
-         </Text>
+         </Label>
       </children>
    </VBox>
    <VBox alignment="CENTER" layoutX="1085.0" layoutY="430.0" prefHeight="79.0" prefWidth="91.0" spacing="110.0">
       <children>
-         <Text fx:id="mYText" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: WHITE;" text="000.00">
+         <Label fx:id="mYLabel" style="-fx-fill: WHITE;" text="000.00">
             <font>
-               <Font size="26.0" />
+               <Font name="Courier New" size="20.0" />
             </font>
-         </Text>
+         </Label>
       </children>
    </VBox>
    <VBox alignment="CENTER" layoutX="1085.0" layoutY="582.0" prefHeight="79.0" prefWidth="91.0" spacing="110.0">
       <children>
-         <Text fx:id="mExitAngleText" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: WHITE;" text="000.00">
+         <Label fx:id="mExitAngleLabel" style="-fx-fill: WHITE;" text="000.00">
             <font>
-               <Font size="26.0" />
+               <Font name="Courier New" size="20.0" />
             </font>
-         </Text>
+         </Label>
       </children>
    </VBox>
-   <Slider fx:id="mTimeSlider" layoutX="219.0" layoutY="670.0" majorTickUnit="1.0" max="1.0" minorTickCount="0" prefHeight="14.0" prefWidth="587.0" showTickLabels="true" showTickMarks="true" stylesheets="@css/Slider.css" />
-   <Button fx:id="mStartPauseButton" layoutX="236.0" layoutY="571.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="119.0" style="-fx-background-color: #595e66; -fx-border-color: WHITE; -fx-text-fill: WHITE;" text="Start">
+   <Slider fx:id="mTimeSlider" layoutX="219.0" layoutY="670.0" majorTickUnit="1.0" max="1.0" minorTickCount="0" prefHeight="14.0" prefWidth="587.0" showTickLabels="true" showTickMarks="true" />
+   <Button fx:id="mStartPauseButton" layoutX="236.0" layoutY="571.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="119.0" text="Start">
       <font>
-         <Font size="24.0" />
+         <Font name="Courier New" size="25.0" />
       </font>
    </Button>
-   <Button fx:id="mStopButton" layoutX="389.0" layoutY="572.0" mnemonicParsing="false" prefHeight="51.0" prefWidth="119.0" style="-fx-background-color: #595e66; -fx-border-color: WHITE; -fx-text-fill: WHITE;" text="Stop">
+   <Button fx:id="mStopButton" layoutX="389.0" layoutY="572.0" mnemonicParsing="false" prefHeight="51.0" prefWidth="119.0" text="Stop">
       <font>
-         <Font size="24.0" />
+         <Font name="Courier New" size="25.0" />
       </font>
    </Button>
-   <Button fx:id="mTimeSmallMinusButton" alignment="CENTER" contentDisplay="CENTER" layoutX="522.0" layoutY="580.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: #595e66; -fx-border-color: WHITE; -fx-text-fill: WHITE;" text="-" textAlignment="CENTER">
+   <Button fx:id="mTimeSmallMinusButton" alignment="CENTER" contentDisplay="CENTER" layoutX="522.0" layoutY="580.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="-" textAlignment="CENTER">
       <font>
-         <Font size="17.0" />
+         <Font name="Courier New" size="17.0" />
       </font>
    </Button>
-   <Button fx:id="mTimeLargeMinusButton" layoutX="570.0" layoutY="558.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="79.0" prefWidth="43.0" style="-fx-background-color: #595e66; -fx-border-color: WHITE; -fx-text-fill: WHITE;" text="-">
+   <Button fx:id="mTimeLargeMinusButton" layoutX="570.0" layoutY="558.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="79.0" prefWidth="43.0" text="-">
       <font>
-         <Font name="System Bold" size="21.0" />
+         <Font name="Courier New" size="17.0" />
       </font>
    </Button>
-   <Button fx:id="mTimeLargePlusButton" layoutX="704.0" layoutY="558.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="79.0" prefWidth="43.0" style="-fx-background-color: #595e66; -fx-border-color: WHITE; -fx-text-fill: WHITE;" text="+">
+   <Button fx:id="mTimeLargePlusButton" layoutX="704.0" layoutY="558.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="79.0" prefWidth="43.0" text="+">
       <font>
-         <Font name="System Bold" size="17.0" />
+         <Font name="Courier New" size="17.0" />
       </font>
    </Button>
-   <Button fx:id="mTimeSmallPlusButton" alignment="CENTER" contentDisplay="CENTER" layoutX="753.0" layoutY="577.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: #595e66; -fx-border-color: WHITE; -fx-text-fill: WHITE;" text="+" textAlignment="CENTER">
+   <Button fx:id="mTimeSmallPlusButton" alignment="CENTER" contentDisplay="CENTER" layoutX="753.0" layoutY="577.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="+" textAlignment="CENTER">
       <font>
-         <Font size="17.0" />
+         <Font name="Courier New" size="17.0" />
       </font>
    </Button>
    <VBox alignment="CENTER" layoutX="613.0" layoutY="557.0" prefHeight="79.0" prefWidth="91.0" spacing="110.0">
       <children>
-         <Text fx:id="mTimeText" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: WHITE;" text="000.00">
+         <Label fx:id="mTimeLabel" style="-fx-fill: WHITE;" text="000.00">
             <font>
-               <Font size="26.0" />
+               <Font name="Courier New" size="20.0" />
             </font>
-         </Text>
+         </Label>
       </children>
    </VBox>
-   <Text layoutX="637.0" layoutY="552.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: WHITE;" text="Time">
+   <Label layoutX="634.0" layoutY="540.0" style="-fx-fill: WHITE;" text="Time">
       <font>
-         <Font size="20.0" />
+         <Font name="Courier New" size="20.0" />
       </font>
-   </Text>
+   </Label>
 </Pane>
