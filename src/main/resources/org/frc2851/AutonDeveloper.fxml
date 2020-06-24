@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
@@ -173,6 +174,9 @@
       <font>
          <Font name="Courier New" size="17.0" />
       </font>
+      <rotationAxis>
+         <Point3D />
+      </rotationAxis>
    </Button>
    <Button fx:id="mTimeSmallPlusButton" alignment="CENTER" contentDisplay="CENTER" layoutX="753.0" layoutY="577.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="+" textAlignment="CENTER">
       <font>

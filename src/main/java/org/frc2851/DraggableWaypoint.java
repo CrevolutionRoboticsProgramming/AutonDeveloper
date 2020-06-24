@@ -48,16 +48,13 @@ public class DraggableWaypoint extends Region
         setOnMousePressed((event) -> mMouseOffset = new Point2D(event.getSceneX() - getDimensions().x, event.getSceneY() - getDimensions().y));
 
         mRankLabel = new Label();
-
         mRankLabel.setText(String.valueOf(rank));
         mRankLabel.setFont(Font.font("Courier New", FontWeight.EXTRA_BOLD, 20));
-        mRankLabel.setTranslateX(width / 2 - (Toolkit.getToolkit().getFontLoader().getCharWidth('0', mRankLabel.getFont()) * (rank < 10 ? 1 : 2) / 2));
+
+        // We can't get the width of the text programmatically, so we have to manually adjust its alignment with the waypoint
+        mRankLabel.setTranslateX(width / 2 - (10.0 * (rank < 10 ? 1 : 2) / 2.0));
         mRankLabel.setTranslateY(length / 2 + 2);
         mRankLabel.setEffect(new DropShadow(BlurType.ONE_PASS_BOX, Color.valueOf("black"), 10, 1, 0, 0));
-
-        System.out.println("Pref width: " + mRankLabel.getPrefWidth());
-        System.out.println("Layout bounds width: " + mRankLabel.getLayoutBounds().getWidth());
-        System.out.println("Toolkit: " + Toolkit.getToolkit().getFontLoader().getCharWidth('0', Font.font("Courier New", FontWeight.EXTRA_BOLD, 20)));
 
         mRotateIcon = new ImageView(String.valueOf(getClass().getResource("/org/frc2851/RotateIcon.png")));
         mRotateIcon.setFitWidth(width / 2);
