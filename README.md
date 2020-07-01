@@ -1,5 +1,5 @@
 # AutonDeveloper
-Crevolution's motion profile generator JavaFX GUI for interfacing with WPI's trajectory generation library
+### Crevolution's JavaFX GUI for interfacing with WPI's trajectory generation library
 
 ## Screenshots
 
