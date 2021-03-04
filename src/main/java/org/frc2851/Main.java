@@ -10,7 +10,9 @@ import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -126,19 +128,27 @@ public class Main extends Application
         }
         mFieldsComboBox.getSelectionModel().selectFirst();
 
+        mFieldsComboBox.setOnAction(event ->
+        {
+            // Sets the image displayed in the field ImageView to the newly selected field
+            mFieldImageView.setImage(new Image(Fields.fields[mFieldsComboBox.getSelectionModel().getSelectedIndex()].getPictureUrl()));
+            Constants.selectedField = Fields.fields[mFieldsComboBox.getSelectionModel().getSelectedIndex()];
+
+            if (mRobotRectangle != null)
+            {
+                mRobotRectangle.setWidth(mSelectedRobot.getWidthPixels());
+                mRobotRectangle.setHeight(mSelectedRobot.getLengthPixels());
+            }
+        });
+
+        // Sets default to first field
+        mFieldsComboBox.getOnAction().handle(new ActionEvent());
+
         for (Robot robot : Robots.robots)
         {
             mRobotsComboBox.getItems().add(robot.getName());
         }
         mRobotsComboBox.getSelectionModel().selectFirst();
-
-        // Sets default to first field
-        mFieldImageView.setImage(new Image(String.valueOf(getClass().getResource(Fields.fields[0].getPictureUrl()))));
-        mFieldsComboBox.setOnAction(event ->
-        {
-            // Sets the image displayed in the field ImageView to the newly selected field
-            mFieldImageView.setImage(new Image(Fields.fields[mFieldsComboBox.getSelectionModel().getSelectedIndex()].getPictureUrl()));
-        });
 
         // Sets default to first robot
         mSelectedRobot = Robots.robots[0];
@@ -340,8 +350,8 @@ public class Main extends Application
 
                     updateDisplay(mSelectedWaypoint);
 
-                    double smallOffset = Util.inchesToPixels(0.25);
-                    double largeOffset = Util.inchesToPixels(1.0);
+                    double smallOffset = Constants.inchesToPixels(0.25);
+                    double largeOffset = Constants.inchesToPixels(1.0);
 
                     configureLongPressButton(mXSmallMinusButton, () ->
                     {
@@ -447,7 +457,7 @@ public class Main extends Application
                     {
                         ArrayList<Pose2d> poses = new ArrayList<>();
                         for (DraggableWaypoint waypoint : mWaypoints)
-                            poses.add(new Pose2d(Util.pixelsToInches(waypoint.getDimensions().center.getX()), Util.pixelsToInches(waypoint.getDimensions().center.getY()),
+                            poses.add(new Pose2d(Constants.pixelsToInches(waypoint.getDimensions().center.getX()), Constants.pixelsToInches(waypoint.getDimensions().center.getY()),
                                     Rotation2d.fromDegrees(waypoint.getRotate() - 90)));
 
                         TrajectoryConfig config = new TrajectoryConfig(mSelectedRobot.getMaxVelocity(), mSelectedRobot.getMaxAcceleration()).setKinematics(mSelectedRobot.getDriveKinematics());
@@ -459,8 +469,8 @@ public class Main extends Application
                             rectangle.setFill(Paint.valueOf("BLACK"));
                             rectangle.setLayoutX(mFieldImageView.getLayoutX() + mFieldImageView.getTranslateX());
                             rectangle.setLayoutY(mFieldImageView.getLayoutY() + mFieldImageView.getTranslateY());
-                            rectangle.setTranslateX(Util.inchesToPixels(trajectory.sample(timeSeconds).poseMeters.getTranslation().getX()) - mSelectedRobot.getWidthPixels() / 2);
-                            rectangle.setTranslateY(Util.inchesToPixels(trajectory.sample(timeSeconds).poseMeters.getTranslation().getY()) - mSelectedRobot.getLengthPixels() / 2);
+                            rectangle.setTranslateX(Constants.inchesToPixels(trajectory.sample(timeSeconds).poseMeters.getTranslation().getX()) - mSelectedRobot.getWidthPixels() / 2);
+                            rectangle.setTranslateY(Constants.inchesToPixels(trajectory.sample(timeSeconds).poseMeters.getTranslation().getY()) - mSelectedRobot.getLengthPixels() / 2);
                             rectangle.setRotate(trajectory.sample(timeSeconds).poseMeters.getRotation().getDegrees() + 90);
 
                             if (rectangle.getTranslateX() > 0
@@ -483,7 +493,6 @@ public class Main extends Application
                 new KeyFrame(Duration.millis(25))
         );
         lineDrawer.setCycleCount(Timeline.INDEFINITE);
-
         lineDrawer.play();
 
         final Timeline trajectoryFollower = new Timeline(
@@ -512,7 +521,7 @@ public class Main extends Application
                 case STOPPED:
                     ArrayList<Pose2d> poses = new ArrayList<>();
                     for (DraggableWaypoint waypoint : mWaypoints)
-                        poses.add(new Pose2d(Util.pixelsToInches(waypoint.getDimensions().center.getX()), Util.pixelsToInches(waypoint.getDimensions().center.getY()),
+                        poses.add(new Pose2d(Constants.pixelsToInches(waypoint.getDimensions().center.getX()), Constants.pixelsToInches(waypoint.getDimensions().center.getY()),
                                 Rotation2d.fromDegrees(waypoint.getRotate() - 90)));
 
                     TrajectoryConfig config = new TrajectoryConfig(mSelectedRobot.getMaxVelocity(), mSelectedRobot.getMaxAcceleration()).setKinematics(mSelectedRobot.getDriveKinematics());
@@ -653,8 +662,8 @@ public class Main extends Application
     private void advanceTrajectory()
     {
         Trajectory.State state = mTrajectoryToFollow.sample(mCurrentPlaybackTimeMs / 1000.0);
-        mRobotRectangle.setTranslateX(Util.inchesToPixels(state.poseMeters.getTranslation().getX()) - mSelectedRobot.getWidthPixels() / 2);
-        mRobotRectangle.setTranslateY(Util.inchesToPixels(state.poseMeters.getTranslation().getY()) - mSelectedRobot.getLengthPixels() / 2);
+        mRobotRectangle.setTranslateX(Constants.inchesToPixels(state.poseMeters.getTranslation().getX()) - mSelectedRobot.getWidthPixels() / 2);
+        mRobotRectangle.setTranslateY(Constants.inchesToPixels(state.poseMeters.getTranslation().getY()) - mSelectedRobot.getLengthPixels() / 2);
         mRobotRectangle.setRotate(state.poseMeters.getRotation().getDegrees() + 90);
         mRobotRectangle.toFront();
     }

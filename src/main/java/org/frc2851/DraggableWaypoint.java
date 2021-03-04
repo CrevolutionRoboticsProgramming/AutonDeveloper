@@ -1,6 +1,5 @@
 package org.frc2851;
 
-import com.sun.javafx.tk.Toolkit;
 import javafx.geometry.Point2D;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
@@ -74,8 +73,8 @@ public class DraggableWaypoint extends Region
     private void truncatePosition()
     {
         // Makes the x- and y-coordinates multiples of 0.25 for +1 prettiness
-        setTranslateX(getTranslateX() - Util.inchesToPixels(getAdjustedXInches() % 0.25));
-        setTranslateY(getTranslateY() + Util.inchesToPixels(getAdjustedYInches() % 0.25));
+        setTranslateX(getTranslateX() - Constants.inchesToPixels(getAdjustedXInches() % 0.25));
+        setTranslateY(getTranslateY() + Constants.inchesToPixels(getAdjustedYInches() % 0.25));
     }
 
     public void constrainTranslation(double x, double y, double width, double height)
@@ -137,14 +136,14 @@ public class DraggableWaypoint extends Region
 
     public double getAdjustedXInches()
     {
-        return Util.pixelsToInches(getDimensions().center.getX());
+        return Constants.pixelsToInches(getDimensions().center.getX());
     }
 
     public double getAdjustedYInches()
     {
         // Position is measured with (0, 0) in the top-left corner; x increases rightwards, y increases downwards
         // This flips the measurement to make (0, 0) the bottom-left corner of the picture
-        return 324 - Util.pixelsToInches(getDimensions().center.getY());
+        return 324 - Constants.pixelsToInches(getDimensions().center.getY());
     }
 
     private Point2D getRotatedPoint(Point2D center, Point2D point, double rotation)

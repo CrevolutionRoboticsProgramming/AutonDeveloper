@@ -1,7 +1,7 @@
 package org.frc2851.robot;
 
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
-import org.frc2851.Util;
+import org.frc2851.Constants;
 
 public class Robot
 {
@@ -32,8 +32,8 @@ public class Robot
                  double maxVelocity, double maxAcceleration, double maxJerk)
     {
         mName = name;
-        mWidth = Util.inchesToPixels(width);
-        mLength = Util.inchesToPixels(length);
+        mWidth = width;
+        mLength = length;
         mDriveKinematics = new DifferentialDriveKinematics(wheelbase);
         mMaxVelocity = maxVelocity;
         mMaxAcceleration = maxAcceleration;
@@ -47,22 +47,22 @@ public class Robot
     
     public double getWidthPixels()
     {
-        return mWidth;
+        return Constants.inchesToPixels(mWidth);
     }
 
     public double getWidthInches()
     {
-        return Util.pixelsToInches(mWidth);
+        return mWidth;
     }
 
     public double getLengthPixels()
     {
-        return mLength;
+        return Constants.inchesToPixels(mLength);
     }
 
     public double getLengthInches()
     {
-        return Util.pixelsToInches(mLength);
+        return mLength;
     }
 
     public DifferentialDriveKinematics getDriveKinematics()

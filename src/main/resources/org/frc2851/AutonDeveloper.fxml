@@ -6,8 +6,8 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<Pane fx:id="mRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" stylesheets="@css/DarkMode.css" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.frc2851.Main">
-   <ImageView fx:id="mFieldImageView" fitHeight="486.0" fitWidth="972.0" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+<Pane fx:id="mRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" stylesheets="@css/DarkMode.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.frc2851.Main">
+   <ImageView fx:id="mFieldImageView" fitHeight="468.0" fitWidth="936.0" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
       <Image url="@field/InfiniteRecharge.png" />
    </ImageView>
    <Button fx:id="mClearNodesButton" layoutX="1050.0" layoutY="49.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="164.0" text="Clear Nodes">
