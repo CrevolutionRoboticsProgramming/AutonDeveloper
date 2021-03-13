@@ -1,12 +1,10 @@
 package org.frc2851;
 
-import javafx.scene.control.ComboBox;
 import org.frc2851.field.Field;
-import org.frc2851.field.Fields;
 
-// TODO: Find a less ugly solution
 public final class Constants
 {
+    // TODO: Find a solution that's not as ugly as this global variable
     public static Field selectedField;
 
     public static double pixelsToInches(double pixels)

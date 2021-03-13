@@ -1,6 +1,7 @@
 package org.frc2851;
 
 import javafx.geometry.Point2D;
+import javafx.scene.control.Label;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
@@ -12,7 +13,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.scene.control.Label;
 
 public class DraggableWaypoint extends Region
 {
@@ -38,13 +38,15 @@ public class DraggableWaypoint extends Region
         mRectangle.setWidth(width);
         mRectangle.setHeight(length);
 
-        mRectangle.setFill(Paint.valueOf("white"));
+        mRectangle.setFill(Paint.valueOf("WHITE"));
 
-        mRectangle.setStroke(Paint.valueOf("black"));
+        mRectangle.setStroke(Paint.valueOf("BLACK"));
         mRectangle.setStrokeType(StrokeType.INSIDE);
         mRectangle.setStrokeWidth(2);
 
-        setOnMousePressed((event) -> mMouseOffset = new Point2D(event.getSceneX() - getDimensions().x, event.getSceneY() - getDimensions().y));
+        // setOnMousePressed refused to work
+        addEventFilter(MouseEvent.MOUSE_PRESSED,
+                event -> mMouseOffset = new Point2D(event.getSceneX() - getDimensions().x, event.getSceneY() - getDimensions().y));
 
         mRankLabel = new Label();
         mRankLabel.setText(String.valueOf(rank));
@@ -53,7 +55,7 @@ public class DraggableWaypoint extends Region
         // We can't get the width of the text programmatically, so we have to manually adjust its alignment with the waypoint
         mRankLabel.setTranslateX(width / 2 - (10.0 * (rank < 10 ? 1 : 2) / 2.0));
         mRankLabel.setTranslateY(length / 2 + 2);
-        mRankLabel.setEffect(new DropShadow(BlurType.ONE_PASS_BOX, Color.valueOf("black"), 10, 1, 0, 0));
+        mRankLabel.setEffect(new DropShadow(BlurType.ONE_PASS_BOX, Color.valueOf("BLACK"), 10, 1, 0, 0));
 
         mRotateIcon = new ImageView(String.valueOf(getClass().getResource("/org/frc2851/RotateIcon.png")));
         mRotateIcon.setFitWidth(width / 2);
@@ -73,8 +75,8 @@ public class DraggableWaypoint extends Region
     private void truncatePosition()
     {
         // Makes the x- and y-coordinates multiples of 0.25 for +1 prettiness
-        setTranslateX(getTranslateX() - Constants.inchesToPixels(getAdjustedXInches() % 0.25));
-        setTranslateY(getTranslateY() + Constants.inchesToPixels(getAdjustedYInches() % 0.25));
+        setTranslateX(getTranslateX() - Constants.inchesToPixels(getXInches() % 0.25));
+        setTranslateY(getTranslateY() + Constants.inchesToPixels(getFlippedYInches() % 0.25));
     }
 
     public void constrainTranslation(double x, double y, double width, double height)
@@ -134,16 +136,21 @@ public class DraggableWaypoint extends Region
         return getTranslateY();
     }
 
-    public double getAdjustedXInches()
+    public double getXInches()
     {
         return Constants.pixelsToInches(getDimensions().center.getX());
     }
 
-    public double getAdjustedYInches()
+    public double getUnflippedYInches()
+    {
+        return Constants.pixelsToInches(getDimensions().center.getY());
+    }
+
+    public double getFlippedYInches()
     {
         // Position is measured with (0, 0) in the top-left corner; x increases rightwards, y increases downwards
         // This flips the measurement to make (0, 0) the bottom-left corner of the picture
-        return 324 - Constants.pixelsToInches(getDimensions().center.getY());
+        return Constants.selectedField.getWidth() - getUnflippedYInches();
     }
 
     private Point2D getRotatedPoint(Point2D center, Point2D point, double rotation)
