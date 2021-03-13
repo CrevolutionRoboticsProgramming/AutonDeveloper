@@ -17,7 +17,6 @@ public class Robot
 
     private double mMaxVelocity;
     private double mMaxAcceleration;
-    private double mMaxJerk;
 
     /**
      * @param name Name
@@ -26,10 +25,9 @@ public class Robot
      * @param wheelbase Wheelbase in inches
      * @param maxVelocity Max velocity in inches per second
      * @param maxAcceleration Max acceleration in inches per second squared
-     * @param maxJerk Max jerk in inches per second cubed
      */
     public Robot(String name, double width, double length, double wheelbase,
-                 double maxVelocity, double maxAcceleration, double maxJerk)
+                 double maxVelocity, double maxAcceleration)
     {
         mName = name;
         mWidth = width;
@@ -37,7 +35,6 @@ public class Robot
         mDriveKinematics = new DifferentialDriveKinematics(wheelbase);
         mMaxVelocity = maxVelocity;
         mMaxAcceleration = maxAcceleration;
-        mMaxJerk = maxJerk;
     }
 
     public String getName()
@@ -78,10 +75,5 @@ public class Robot
     public double getMaxAcceleration()
     {
         return mMaxAcceleration;
-    }
-
-    public double getMaxJerk()
-    {
-        return mMaxJerk;
     }
 }
