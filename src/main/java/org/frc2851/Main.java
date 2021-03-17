@@ -992,20 +992,21 @@ public class Main extends Application
 
     private void advanceTrajectory()
     {
-        double totalTimeMs = 0;
+        double lastTimeMs, totalTimeMs = 0;
         for (CustomTrajectory customTrajectory : mCustomTrajectories)
         {
+            lastTimeMs = totalTimeMs;
             totalTimeMs += customTrajectory.getTrajectory().getTotalTimeSeconds() * 1000;
-            if (mCurrentPlaybackTimeMs < totalTimeMs)
+            if (mCurrentPlaybackTimeMs > lastTimeMs
+                    && mCurrentPlaybackTimeMs < totalTimeMs)
             {
                 Trajectory.State state = customTrajectory.getTrajectory().sample((mCurrentPlaybackTimeMs - (totalTimeMs - customTrajectory.getTrajectory().getTotalTimeSeconds() * 1000)) / 1000.0);
                 mRobotRepresentation.setTranslateX(Constants.inchesToPixels(state.poseMeters.getTranslation().getX()) - mSelectedRobot.getWidthPixels() / 2);
                 mRobotRepresentation.setTranslateY(Constants.inchesToPixels(state.poseMeters.getTranslation().getY()) - mSelectedRobot.getLengthPixels() / 2);
+                mRobotRepresentation.setRotate(state.poseMeters.getRotation().getDegrees() + 90);
 
                 if (customTrajectory.getTrajectoryConfig().isReversed())
-                    mRobotRepresentation.setRotate(state.poseMeters.getRotation().getDegrees() + 270);
-                else
-                    mRobotRepresentation.setRotate(state.poseMeters.getRotation().getDegrees() + 90);
+                    mRobotRepresentation.setRotate(mRobotRepresentation.getRotate() + 180);
 
                 mRobotRepresentation.toFront();
                 break;
