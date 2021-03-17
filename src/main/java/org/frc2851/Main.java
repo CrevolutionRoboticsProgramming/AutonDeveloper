@@ -1005,9 +1005,6 @@ public class Main extends Application
                 mRobotRepresentation.setTranslateY(Constants.inchesToPixels(state.poseMeters.getTranslation().getY()) - mSelectedRobot.getLengthPixels() / 2);
                 mRobotRepresentation.setRotate(state.poseMeters.getRotation().getDegrees() + 90);
 
-                if (customTrajectory.getTrajectoryConfig().isReversed())
-                    mRobotRepresentation.setRotate(mRobotRepresentation.getRotate() + 180);
-
                 mRobotRepresentation.toFront();
                 break;
             }
@@ -1076,6 +1073,9 @@ public class Main extends Application
                     arrow.setTranslateX(Constants.inchesToPixels(sampledRobotPosition.getX()));
                     arrow.setTranslateY(Constants.inchesToPixels(sampledRobotPosition.getY()));
                     arrow.setRotate(customTrajectory.getTrajectory().sample(time).poseMeters.getRotation().getDegrees() + 90);
+
+                    if (customTrajectory.getTrajectoryConfig().isReversed())
+                        arrow.setRotate(arrow.getRotate() + 180);
 
                     mProjectedPath.add(arrow);
                     mRoot.getChildren().add(arrow);
