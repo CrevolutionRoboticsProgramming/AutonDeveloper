@@ -203,6 +203,7 @@ public class Main extends Application
                     .setStartVelocity(Double.parseDouble(mCustomOptionsHashMap.get("Start Velocity")))
                     .setEndVelocity(Double.parseDouble(mCustomOptionsHashMap.get("End Velocity")))
                     .setReversed(Boolean.parseBoolean(mCustomOptionsHashMap.get("Reversed"))));
+            mSelectedTrajectory.generateTrajectory();
             updateProjectedPath();
         });
 
@@ -741,7 +742,12 @@ public class Main extends Application
         updateProjectedPath();
 
         if (mWaypoints.size() == 2)
-            mCustomTrajectories.add(new CustomTrajectory(getTrajectoryConfig(), 0, 1, mProjectedPath.toArray(new Polygon[0])));
+        {
+            CustomTrajectory customTrajectory = new CustomTrajectory(getTrajectoryConfig(), 0, 1, mProjectedPath.toArray(new Polygon[0]));
+            customTrajectory.setPoses(getPoses(customTrajectory));
+            customTrajectory.generateTrajectory();
+            mCustomTrajectories.add(customTrajectory);
+        }
         if (mWaypoints.size() > 2)
             mCustomTrajectories.get(mCustomTrajectories.size() - 1).setEndWaypointIndex(mWaypoints.size() - 1);
     }
@@ -1018,20 +1024,23 @@ public class Main extends Application
 
         for (CustomTrajectory customTrajectory : mCustomTrajectories)
         {
-            ArrayList<Pose2d> poses = new ArrayList<>();
-            for (int i = customTrajectory.getStartWaypointIndex(); i <= customTrajectory.getEndWaypointIndex(); ++i)
-            {
-                double angle = mWaypoints.get(i).getRotate() - 90;
-                if (customTrajectory.getTrajectoryConfig().isReversed())
-                    angle += 180;
-                poses.add(new Pose2d(
-                        Constants.pixelsToInches(mWaypoints.get(i).getDimensions().center.getX()),
-                        Constants.pixelsToInches(mWaypoints.get(i).getDimensions().center.getY()),
-                        Rotation2d.fromDegrees(angle)));
-            }
-
-            customTrajectory.setTrajectory(TrajectoryGenerator.generateTrajectory(poses, getTrajectoryConfig()));
+            customTrajectory.setPoses(getPoses(customTrajectory));
+            customTrajectory.generateTrajectory();
         }
+    }
+
+    private ArrayList<Pose2d> getPoses(CustomTrajectory customTrajectory)
+    {
+        ArrayList<Pose2d> poses = new ArrayList<>();
+        for (int i = customTrajectory.getStartWaypointIndex(); i <= customTrajectory.getEndWaypointIndex(); ++i)
+        {
+            double angle = mWaypoints.get(i).getRotate() - 90;
+            poses.add(new Pose2d(
+                    Constants.pixelsToInches(mWaypoints.get(i).getDimensions().center.getX()),
+                    Constants.pixelsToInches(mWaypoints.get(i).getDimensions().center.getY()),
+                    Rotation2d.fromDegrees(angle)));
+        }
+        return poses;
     }
 
     private void updateProjectedPath()

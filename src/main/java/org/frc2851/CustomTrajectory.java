@@ -1,7 +1,9 @@
 package org.frc2851;
 
+import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import javafx.scene.shape.Polygon;
 
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ public class CustomTrajectory
     private ArrayList<Polygon> mArrows;
     private int mStartWaypointIndex;
     private int mEndWaypointIndex;
+    private ArrayList<Pose2d> mPoses;
     private Trajectory mTrajectory;
 
     public CustomTrajectory(TrajectoryConfig trajectoryConfig, int startWaypointIndex, int endWaypointIndex, Polygon... arrows)
@@ -69,8 +72,13 @@ public class CustomTrajectory
         return mTrajectory;
     }
 
-    public void setTrajectory(Trajectory trajectory)
+    public void setPoses(ArrayList<Pose2d> poses)
     {
-        mTrajectory = trajectory;
+        mPoses = poses;
+    }
+
+    public void generateTrajectory()
+    {
+        mTrajectory = TrajectoryGenerator.generateTrajectory(mPoses, getTrajectoryConfig());
     }
 }
