@@ -203,6 +203,24 @@ public class Main extends Application
                     .setStartVelocity(Double.parseDouble(mCustomOptionsHashMap.get("Start Velocity")))
                     .setEndVelocity(Double.parseDouble(mCustomOptionsHashMap.get("End Velocity")))
                     .setReversed(Boolean.parseBoolean(mCustomOptionsHashMap.get("Reversed"))));
+
+            if (mCustomTrajectories.size() > 1)
+            {
+                if (mCustomTrajectories.indexOf(mSelectedTrajectory) != 0)
+                {
+                    CustomTrajectory lastTrajectory = mCustomTrajectories.get(mCustomTrajectories.indexOf(mSelectedTrajectory) - 1);
+                    lastTrajectory.setTrajectoryConfig(lastTrajectory.getTrajectoryConfig()
+                            .setEndVelocity(mSelectedTrajectory.getTrajectoryConfig().getStartVelocity()));
+                }
+
+                if (mCustomTrajectories.indexOf(mSelectedTrajectory) != mCustomTrajectories.size() - 1)
+                {
+                    CustomTrajectory nextTrajectory = mCustomTrajectories.get(mCustomTrajectories.indexOf(mSelectedTrajectory) + 1);
+                    nextTrajectory.setTrajectoryConfig(nextTrajectory.getTrajectoryConfig()
+                            .setStartVelocity(mSelectedTrajectory.getTrajectoryConfig().getEndVelocity()));
+                }
+            }
+
             mSelectedTrajectory.generateTrajectory();
             updateProjectedPath();
         });
