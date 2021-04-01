@@ -78,7 +78,7 @@ public class Main extends Application
     @FXML
     Button mSplitJoinPathButton;
     @FXML
-    Button mCreateTrajectoryButton;
+    Button mGeneratePlotsButton;
     @FXML
     Button mExportWaypointsButton;
     @FXML
@@ -386,7 +386,7 @@ public class Main extends Application
             updateArrowOwnership();
         });
 
-        mCreateTrajectoryButton.setOnAction(event ->
+        mGeneratePlotsButton.setOnAction(event ->
         {
             ArrayList<Trajectory> generatedTrajectories = new ArrayList<>();
 
@@ -396,8 +396,6 @@ public class Main extends Application
                 for (int i = trajectory.getStartWaypointIndex(); i <= trajectory.getEndWaypointIndex(); ++i)
                 {
                     double angle = -mWaypoints.get(i).getRotate() + 90;
-                    if (Boolean.parseBoolean(mCustomOptionsHashMap.get("Reversed")))
-                        angle += 180;
                     poses.add(new Pose2d(mWaypoints.get(i).getXInches(), mWaypoints.get(i).getFlippedYInches(), Rotation2d.fromDegrees(angle)));
                 }
 

@@ -80,7 +80,7 @@
          <Font name="Courier New" size="18.0" />
       </font>
    </Button>
-   <Button fx:id="mCreateTrajectoryButton" layoutX="14.0" layoutY="494.0" mnemonicParsing="false" prefHeight="92.0" prefWidth="193.0" text="Create&#10;Trajectory" textAlignment="CENTER">
+   <Button fx:id="mGeneratePlotsButton" layoutX="14.0" layoutY="494.0" mnemonicParsing="false" prefHeight="92.0" prefWidth="193.0" text="Generate&#10;Plots" textAlignment="CENTER">
       <font>
          <Font name="Courier New" size="25.0" />
       </font>
