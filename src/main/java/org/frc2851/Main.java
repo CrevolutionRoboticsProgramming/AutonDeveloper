@@ -33,6 +33,10 @@ import org.frc2851.field.Field;
 import org.frc2851.field.Fields;
 import org.frc2851.robot.Robot;
 import org.frc2851.robot.Robots;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+import org.json.JSONWriter;
 
 import java.io.*;
 import java.text.DecimalFormat;
@@ -230,6 +234,16 @@ public class Main extends Application
             mStopButton.fire();
 
             addNode(event.getX(), event.getY(), 0.0);
+
+            if (mWaypoints.size() == 2)
+            {
+                CustomTrajectory customTrajectory = new CustomTrajectory(getTrajectoryConfig(), 0, 1, mProjectedPath.toArray(new Polygon[0]));
+                customTrajectory.setPoses(getPoses(customTrajectory));
+                customTrajectory.generateTrajectory();
+                mCustomTrajectories.add(customTrajectory);
+            }
+            if (mWaypoints.size() > 2)
+                mCustomTrajectories.get(mCustomTrajectories.size() - 1).setEndWaypointIndex(mWaypoints.size() - 1);
         });
 
         mClearNodesButton.setOnAction(event ->
@@ -509,29 +523,47 @@ public class Main extends Application
         {
             try
             {
-                FileWriter waypointsFileWriter = new FileWriter("Waypoints.csv");
+                FileWriter waypointsFileWriter = new FileWriter("Waypoints.json");
+                JSONWriter jsonWriter = new JSONWriter(waypointsFileWriter);
 
-                waypointsFileWriter.append("x,y,heading\n");
-                for (DraggableWaypoint waypoint : mWaypoints)
-                {
-                    waypointsFileWriter
-                            .append(String.valueOf(waypoint.getXInches()))
-                            .append(",").append(String.valueOf(waypoint.getFlippedYInches()))
-                            .append(",").append(String.valueOf(waypoint.getRotate()))
-                            .append('\n');
-                }
-
-                waypointsFileWriter.append("startIndex,endIndex,startVelocity,endVelocity,isReversed\n");
+                JSONArray trajectories = new JSONArray();
+                JSONObject trajectory;
+                JSONArray waypoints;
+                JSONObject waypoint;
+                JSONObject config;
                 for (CustomTrajectory customTrajectory : mCustomTrajectories)
                 {
-                    waypointsFileWriter
-                            .append(String.valueOf(customTrajectory.getStartWaypointIndex()))
-                            .append(",").append(String.valueOf(customTrajectory.getEndWaypointIndex()))
-                            .append(",").append(String.valueOf(customTrajectory.getTrajectoryConfig().getStartVelocity()))
-                            .append(",").append(String.valueOf(customTrajectory.getTrajectoryConfig().getEndVelocity()))
-                            .append(",").append(String.valueOf(customTrajectory.getTrajectoryConfig().isReversed()))
-                            .append('\n');
+                    waypoints = new JSONArray();
+                    for (int i = customTrajectory.getStartWaypointIndex(); i <= customTrajectory.getEndWaypointIndex(); ++i)
+                    {
+                        waypoint = new JSONObject();
+                        waypoint.put("x", mWaypoints.get(i).getXInches());
+                        waypoint.put("y", mWaypoints.get(i).getFlippedYInches());
+                        waypoint.put("heading", mWaypoints.get(i).getRotate());
+
+                        waypoints.put(waypoint);
+                    }
+
+                    config = new JSONObject();
+                    config.put("startVelocity", customTrajectory.getTrajectoryConfig().getStartVelocity());
+                    config.put("endVelocity", customTrajectory.getTrajectoryConfig().getEndVelocity());
+                    config.put("isReversed", customTrajectory.getTrajectoryConfig().isReversed());
+
+                    trajectory = new JSONObject();
+                    trajectory.put("waypoints", waypoints);
+                    trajectory.put("config", config);
+
+                    trajectories.put(trajectory);
                 }
+
+                jsonWriter.object();
+
+                jsonWriter.key("trajectories").value(trajectories);
+
+                // TODO: Add support for exporting actions
+                jsonWriter.key("actions").value(new JSONArray());
+
+                jsonWriter.endObject();
 
                 waypointsFileWriter.close();
             } catch (IOException e)
@@ -550,41 +582,37 @@ public class Main extends Application
 
                 try
                 {
-                    BufferedReader waypointsBufferedReader = new BufferedReader(new FileReader(file));
+                    JSONObject jsonObject = new JSONObject(new JSONTokener(new FileReader(file)));
 
-                    // TODO: Make a prettier solution, probably with YAML
-                    boolean readingWaypoints = true;
-
-                    // Discards the waypoints header
-                    String line = waypointsBufferedReader.readLine();
-                    String[] properties;
-                    while ((line = waypointsBufferedReader.readLine()) != null)
+                    JSONArray trajectories = jsonObject.getJSONArray("trajectories");
+                    JSONObject trajectory;
+                    JSONArray waypoints;
+                    JSONObject config;
+                    int waypointIndexRunningTotal = 0;
+                    for (int trajectoryIndex = 0; trajectoryIndex < trajectories.length(); ++trajectoryIndex)
                     {
-                        properties = line.split(",");
+                        trajectory = trajectories.getJSONObject(trajectoryIndex);
+                        waypoints = trajectory.getJSONArray("waypoints");
 
-                        if (properties[0].equals("startIndex"))
+                        int startWaypointIndex = trajectoryIndex == 0 ? waypointIndexRunningTotal : waypointIndexRunningTotal - 1;
+                        // If this isn't the first trajectory, skip the first waypoint; this waypoint is the same as the end waypoint of the previous trajectory
+                        for (int waypointIndex = trajectoryIndex == 0 ? 0 : 1; waypointIndex < waypoints.length(); ++waypointIndex, ++waypointIndexRunningTotal)
                         {
-                            readingWaypoints = false;
-                            mCustomTrajectories.clear();
-                            configureButtons(mWaypoints.get(mWaypoints.size() - 1));
-                            continue;
+                            JSONObject waypoint = waypoints.getJSONObject(waypointIndex);
+                            addNode(Constants.inchesToPixels(waypoint.getDouble("x")),
+                                    Constants.inchesToPixels(Constants.selectedField.getWidth() - waypoint.getDouble("y")),
+                                    waypoint.getDouble("heading"));
                         }
 
-                        if (readingWaypoints)
-                        {
-                            addNode(Constants.inchesToPixels(Double.parseDouble(properties[0])),
-                                    Constants.inchesToPixels(Constants.selectedField.getWidth() - Double.parseDouble(properties[1])),
-                                    Double.parseDouble(properties[2]));
-                        } else
-                        {
-                            TrajectoryConfig config = getTrajectoryConfig()
-                                    .setStartVelocity(Double.parseDouble(properties[2]))
-                                    .setEndVelocity(Double.parseDouble(properties[3]))
-                                    .setReversed(Boolean.parseBoolean(properties[4]));
-                            mCustomTrajectories.add(new CustomTrajectory(config, Integer.parseInt(properties[0]), Integer.parseInt(properties[1])));
-                        }
+                        config = trajectory.getJSONObject("config");
+                        TrajectoryConfig trajectoryConfig = getTrajectoryConfig()
+                                .setStartVelocity(config.getDouble("startVelocity"))
+                                .setEndVelocity(config.getDouble("endVelocity"))
+                                .setReversed(config.getBoolean("isReversed"));
+                        mCustomTrajectories.add(new CustomTrajectory(trajectoryConfig, startWaypointIndex, waypointIndexRunningTotal - 1));
                     }
-                    waypointsBufferedReader.close();
+
+                    // TODO: Add support for importing actions
                 } catch (IOException e)
                 {
                     e.printStackTrace();
@@ -756,16 +784,6 @@ public class Main extends Application
 
         updateTrajectoriesToFollow();
         updateProjectedPath();
-
-        if (mWaypoints.size() == 2)
-        {
-            CustomTrajectory customTrajectory = new CustomTrajectory(getTrajectoryConfig(), 0, 1, mProjectedPath.toArray(new Polygon[0]));
-            customTrajectory.setPoses(getPoses(customTrajectory));
-            customTrajectory.generateTrajectory();
-            mCustomTrajectories.add(customTrajectory);
-        }
-        if (mWaypoints.size() > 2)
-            mCustomTrajectories.get(mCustomTrajectories.size() - 1).setEndWaypointIndex(mWaypoints.size() - 1);
     }
 
     private void updateArrowOwnership()
