@@ -11,8 +11,9 @@ public class Fields
     public static Field infiniteRechargeBarrel = new Field("Barrel", "/org/frc2851/field/Barrel.png", 30*12, 15*12);
     public static Field infiniteRechargeSlalom = new Field("Slalom", "/org/frc2851/field/Slalom.png", 30*12, 15*12);
     public static Field infiniteRechargeBounce = new Field("Bounce", "/org/frc2851/field/Bounce.png", 30*12, 15*12);
+    public static Field rapidReact = new Field("Rapid React", "/org/frc2851/field/RapidReact.png", 54*12, 27*12);
 
     public static Field[] fields = {infiniteRechargeGalacticSearchA, infiniteRechargeGalacticSearchB,
             infiniteRechargeBarrel, infiniteRechargeSlalom, infiniteRechargeBounce, infiniteRecharge,
-            deepSpace};
+            deepSpace, rapidReact};
 }
