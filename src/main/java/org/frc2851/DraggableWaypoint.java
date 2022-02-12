@@ -81,21 +81,22 @@ public class DraggableWaypoint extends Region
 
     public void constrainTranslation(double x, double y, double width, double height)
     {
-        if (getDimensions().x < x)
-        {
-            setTranslateX(x + (getUnrotatedX() - getDimensions().x));
-        } else if (getDimensions().maxX > x + width)
-        {
-            setTranslateX(x + width - (getDimensions().width - (getUnrotatedX() - getDimensions().x)));
-        }
-
-        if (getDimensions().y < y)
-        {
-            setTranslateY(y + (getUnrotatedY() - getDimensions().y));
-        } else if (getDimensions().maxY > y + height)
-        {
-            setTranslateY(y + height - (getDimensions().height - (getTranslateY() - getDimensions().y)));
-        }
+        // We comment this out to make janky trajectories which go outside the bounds of the field in theory, but not in practice
+//        if (getDimensions().x < x)
+//        {
+//            setTranslateX(x + (getUnrotatedX() - getDimensions().x));
+//        } else if (getDimensions().maxX > x + width)
+//        {
+//            setTranslateX(x + width - (getDimensions().width - (getUnrotatedX() - getDimensions().x)));
+//        }
+//
+//        if (getDimensions().y < y)
+//        {
+//            setTranslateY(y + (getUnrotatedY() - getDimensions().y));
+//        } else if (getDimensions().maxY > y + height)
+//        {
+//            setTranslateY(y + height - (getDimensions().height - (getTranslateY() - getDimensions().y)));
+//        }
 
         truncatePosition();
     }

@@ -1,0 +1,8 @@
+build/
+out/
+.idea/
+Waypoints.csv
+Waypoints.json
+AutonDeveloper.iml
+LeftTrajectory.csv
+RightTrajectory.csv
